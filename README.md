@@ -196,6 +196,26 @@ The backend dependency set includes Pytest and HTTPX. Run the project's availabl
 pytest
 ```
 
+## 🤝 Contributing
+
+Contributions that improve the prototype, documentation, accessibility, reliability, tests, or developer experience are welcome.
+
+### How to contribute
+
+1. Fork the repository and create a focused branch.
+2. Make a clear, scoped change and add or update tests where appropriate.
+3. Run the relevant tests and check that the application still starts locally.
+4. Commit your changes with a descriptive message.
+5. Open a pull request describing the problem, solution, and validation performed.
+
+### Contribution guidelines
+
+- Keep pull requests focused and explain any important design decisions.
+- Do not commit secrets, API keys, passwords, private datasets, or sensitive footage.
+- Avoid claiming production-grade detection or identity verification unless it has been tested and documented.
+- Include setup steps and screenshots for meaningful UI changes when helpful.
+- Be respectful and constructive in issues and code reviews.
+
 ## 🔐 Security Notes
 
 This repository is a development/prototype project and should not be treated as a production border-security system without a dedicated security review.
