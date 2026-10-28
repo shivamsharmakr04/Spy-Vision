@@ -15,6 +15,10 @@ async function fetchJSON(endpoint, options = {}) {
       const errorData = await res.json().catch(() => ({ detail: res.statusText }));
       throw new Error(errorData.detail || `HTTP Error ${res.status}`);
     }
+    // Handle 204 No Content (e.g. DELETE responses)
+    if (res.status === 204) {
+      return null;
+    }
     return await res.json();
   } catch (err) {
     console.warn(`[API Warning] ${endpoint}:`, err.message);
@@ -36,7 +40,16 @@ export const api = {
 
   // Zones
   getZones: (cameraId) => fetchJSON(`/cameras/${cameraId}/zones`),
-  createZone: (cameraId, data) => fetchJSON(`/cameras/${cameraId}/zones`, { method: 'POST', body: JSON.stringify(data) }),
+  createZone: (cameraId, data) => {
+    // Transform frontend zone_type -> backend "type" field
+    const payload = {
+      name: data.name,
+      type: data.zone_type || data.type || 'INTRUSION_ZONE',
+      coordinates: data.coordinates || {},
+      enabled: data.is_active !== undefined ? data.is_active : true,
+    };
+    return fetchJSON(`/cameras/${cameraId}/zones`, { method: 'POST', body: JSON.stringify(payload) });
+  },
   updateZone: (zoneId, data) => fetchJSON(`/zones/${zoneId}`, { method: 'PUT', body: JSON.stringify(data) }),
   deleteZone: (zoneId) => fetchJSON(`/zones/${zoneId}`, { method: 'DELETE' }),
 
@@ -58,22 +71,55 @@ export const api = {
 
   // Watchlist - Persons
   getPersons: () => fetchJSON('/watchlist/persons'),
-  createPerson: (data) => fetchJSON('/watchlist/persons', { method: 'POST', body: JSON.stringify(data) }),
+  createPerson: (data) => {
+    // Transform frontend person fields -> backend WatchlistPersonCreate schema
+    const payload = {
+      name: data.full_name || data.name,
+      external_reference: data.suspect_id || data.external_reference || null,
+      image_path: data.photo_url || data.image_path || null,
+      description: data.notes || data.description || null,
+      enabled: true,
+    };
+    return fetchJSON('/watchlist/persons', { method: 'POST', body: JSON.stringify(payload) });
+  },
   updatePerson: (id, data) => fetchJSON(`/watchlist/persons/${id}`, { method: 'PUT', body: JSON.stringify(data) }),
   deletePerson: (id) => fetchJSON(`/watchlist/persons/${id}`, { method: 'DELETE' }),
 
   // Watchlist - Vehicles
   getVehicles: () => fetchJSON('/watchlist/vehicles'),
-  createVehicle: (data) => fetchJSON('/watchlist/vehicles', { method: 'POST', body: JSON.stringify(data) }),
+  createVehicle: (data) => {
+    // Transform frontend vehicle fields -> backend WatchlistVehicleCreate schema
+    const payload = {
+      plate_number: data.plate_number,
+      vehicle_type: data.vehicle_type || null,
+      description: data.notes || data.description || null,
+      enabled: true,
+    };
+    return fetchJSON('/watchlist/vehicles', { method: 'POST', body: JSON.stringify(payload) });
+  },
   updateVehicle: (id, data) => fetchJSON(`/watchlist/vehicles/${id}`, { method: 'PUT', body: JSON.stringify(data) }),
   deleteVehicle: (id) => fetchJSON(`/watchlist/vehicles/${id}`, { method: 'DELETE' }),
 
   // Simulation Trigger (Creates events with AI API Key if configured)
-  triggerSimulatedEvent: (eventData) => fetchJSON('/events', {
-    method: 'POST',
-    headers: { 'X-AI-API-Key': 'development-secret-key' },
-    body: JSON.stringify(eventData),
-  }),
+  triggerSimulatedEvent: (eventData) => {
+    // Transform frontend event -> backend EventCreate schema
+    const payload = {
+      camera_id: eventData.camera_id,
+      event_type: eventData.event_type,
+      timestamp: eventData.timestamp || new Date().toISOString(),
+      confidence: eventData.confidence || null,
+      severity: eventData.severity || 'LOW',
+      metadata: eventData.metadata || null,
+      plate_number: eventData.plate_number || null,
+      snapshot_path: eventData.snapshot_path || null,
+      clip_path: eventData.clip_path || null,
+    };
+    return fetchJSON('/events', {
+      method: 'POST',
+      headers: { 'X-AI-API-Key': 'development-secret-key' },
+      body: JSON.stringify(payload),
+    });
+  },
 };
 
 // WebSocket Alert Manager

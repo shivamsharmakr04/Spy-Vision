@@ -105,22 +105,25 @@ def delete_camera(
     db.delete(camera)
     db.commit()
 
-    @router.post("/{camera_id}/heartbeat")
-    def camera_heartbeat(camera_id: int, db: Session = Depends(get_db)):
-        camera = db.query(Camera).filter(Camera.id == camera_id).first()
+    return {"message": "Camera deleted successfully"}
 
-        if not camera:
-            raise HTTPException(status_code=404, detail="Camera not found")
 
-        camera.status = "ONLINE"
-        camera.updated_at = datetime.now(timezone.utc)
+@router.post("/{camera_id}/heartbeat")
+def camera_heartbeat(camera_id: int, db: Session = Depends(get_db)):
+    camera = db.query(Camera).filter(Camera.id == camera_id).first()
 
-        db.commit()
-        db.refresh(camera)
+    if not camera:
+        raise HTTPException(status_code=404, detail="Camera not found")
 
-        return {
-            "message": "Camera heartbeat received",
-            "camera_id": camera.id,
-            "status": camera.status,
-            "updated_at": camera.updated_at,
-        }
+    camera.status = "ONLINE"
+    camera.updated_at = datetime.now(timezone.utc)
+
+    db.commit()
+    db.refresh(camera)
+
+    return {
+        "message": "Camera heartbeat received",
+        "camera_id": camera.id,
+        "status": camera.status,
+        "updated_at": camera.updated_at,
+    }
