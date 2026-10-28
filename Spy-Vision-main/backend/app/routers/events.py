@@ -13,6 +13,7 @@ from app.services import event_service
 from app.websocket.manager import manager
 
 from app.utils.auth import verify_ai_api_key
+from app.config import settings
 
 # for securing ai api key authentication
 
@@ -22,12 +23,7 @@ router = APIRouter(
 )
 
 
-@router.post(
-    "",
-    response_model=EventResponse,
-    status_code=201,
-    dependencies=[Depends(verify_ai_api_key)],)
-async def create_event(
+async def _create_event(
     event_data: EventCreate,
     db: Session = Depends(get_db),
 ):
@@ -60,6 +56,33 @@ async def create_event(
             status_code=500,
             detail="Database operation failed",
         )
+
+
+@router.post(
+    "",
+    response_model=EventResponse,
+    status_code=201,
+    dependencies=[Depends(verify_ai_api_key)],
+)
+async def create_event(
+    event_data: EventCreate,
+    db: Session = Depends(get_db),
+):
+    return await _create_event(event_data, db)
+
+
+@router.post(
+    "/simulate",
+    response_model=EventResponse,
+    status_code=201,
+)
+async def simulate_event(
+    event_data: EventCreate,
+    db: Session = Depends(get_db),
+):
+    if not settings.debug:
+        raise HTTPException(status_code=404, detail="Not found")
+    return await _create_event(event_data, db)
 
 
 @router.get("")

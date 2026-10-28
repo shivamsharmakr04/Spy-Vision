@@ -1,8 +1,13 @@
-from fastapi import FastAPI, WebSocket, WebSocketDisconnect
-from sqlalchemy import text
+from contextlib import asynccontextmanager
+from pathlib import Path
+
+from alembic import command
+from alembic.config import Config
+from fastapi import FastAPI, HTTPException, WebSocket, WebSocketDisconnect
+from sqlalchemy import inspect, text
 
 from app.config import settings
-from app.database import engine, Base
+from app.database import engine
 
 # Import all models to register with Base.metadata
 from app.models.camera import Camera
@@ -24,17 +29,38 @@ from app.routers import dashboard
 from app.utils.logging import setup_logging
 from fastapi.middleware.cors import CORSMiddleware
 
-# Initialize Database tables
-Base.metadata.create_all(bind=engine)
+def migrate_database() -> None:
+    config = Config(str(Path(__file__).resolve().parents[1] / "alembic.ini"))
+    existing_tables = set(inspect(engine).get_table_names())
+    legacy_tables = {
+        "users",
+        "cameras",
+        "zones",
+        "events",
+        "alerts",
+        "watchlist_persons",
+        "watchlist_vehicles",
+    }
+    if "alembic_version" not in existing_tables and legacy_tables.issubset(existing_tables):
+        # Older app versions created tables directly without recording Alembic state.
+        command.stamp(config, "6a81579fda10")
+    command.upgrade(config, "head")
+
+
+@asynccontextmanager
+async def lifespan(_app: FastAPI):
+    migrate_database()
+    yield
 
 app = FastAPI(
     title=settings.app_name,
     version=settings.app_version,
+    lifespan=lifespan,
 )
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
-    allow_credentials=True,
+    allow_credentials=False,
     allow_methods=["*"],
     allow_headers=["*"],
 )
@@ -62,11 +88,10 @@ def health_check():
         }
 
     except Exception as e:
-        return {
-            "status": "unhealthy",
-            "database": "disconnected",
-            "error": str(e)
-        }
+        raise HTTPException(
+            status_code=503,
+            detail={"status": "unhealthy", "database": "disconnected"},
+        ) from e
 
 
 @app.websocket("/ws/alerts")

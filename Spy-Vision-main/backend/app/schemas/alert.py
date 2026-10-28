@@ -1,7 +1,7 @@
 from datetime import datetime
 from enum import Enum
 
-from pydantic import BaseModel, ConfigDict
+from pydantic import AliasPath, BaseModel, ConfigDict, Field
 
 
 class AlertSeverity(str, Enum):
@@ -26,6 +26,17 @@ class AlertResponse(BaseModel):
     created_at: datetime
     acknowledged_at: datetime | None
     resolved_at: datetime | None
+    camera_id: int = Field(validation_alias=AliasPath("event", "camera_id"))
+    camera_name: str | None = Field(
+        default=None,
+        validation_alias=AliasPath("event", "camera", "name"),
+    )
+    event_type: str = Field(validation_alias=AliasPath("event", "event_type"))
+    timestamp: datetime = Field(validation_alias=AliasPath("event", "timestamp"))
+    snapshot_path: str | None = Field(
+        default=None,
+        validation_alias=AliasPath("event", "snapshot_path"),
+    )
 
     model_config = ConfigDict(from_attributes=True)
 

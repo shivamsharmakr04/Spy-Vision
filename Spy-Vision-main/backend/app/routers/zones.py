@@ -13,6 +13,11 @@ router = APIRouter(
 )
 
 
+@router.get("/zones", response_model=list[ZoneResponse])
+def get_zones(db: Session = Depends(get_db)):
+    return db.query(Zone).order_by(Zone.id).all()
+
+
 @router.post(
     "/cameras/{camera_id}/zones",
     response_model=ZoneResponse,

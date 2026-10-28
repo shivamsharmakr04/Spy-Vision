@@ -1,10 +1,11 @@
 from datetime import datetime, timezone
 
 from fastapi import APIRouter, Depends, HTTPException
-from sqlalchemy.orm import Session
+from sqlalchemy.orm import Session, joinedload
 
 from app.database import get_db
 from app.models.alert import Alert
+from app.models.event import Event
 from app.schemas.alert import AlertResponse
 
 
@@ -12,6 +13,12 @@ router = APIRouter(
     prefix="/api/v1/alerts",
     tags=["Alerts"],
 )
+
+
+def _alerts_query(db: Session):
+    return db.query(Alert).options(
+        joinedload(Alert.event).joinedload(Event.camera)
+    )
 
 
 @router.get(
@@ -22,7 +29,7 @@ def get_alerts(
     db: Session = Depends(get_db),
 ):
     return (
-        db.query(Alert)
+        _alerts_query(db)
         .order_by(Alert.created_at.desc())
         .all()
     )
@@ -37,7 +44,7 @@ def get_alert(
     db: Session = Depends(get_db),
 ):
     alert = (
-        db.query(Alert)
+        _alerts_query(db)
         .filter(Alert.id == alert_id)
         .first()
     )
@@ -60,7 +67,7 @@ def acknowledge_alert(
     db: Session = Depends(get_db),
 ):
     alert = (
-        db.query(Alert)
+        _alerts_query(db)
         .filter(Alert.id == alert_id)
         .first()
     )
@@ -95,7 +102,7 @@ def resolve_alert(
     db: Session = Depends(get_db),
 ):
     alert = (
-        db.query(Alert)
+        _alerts_query(db)
         .filter(Alert.id == alert_id)
         .first()
     )

@@ -135,14 +135,14 @@ export default function CameraManager({ cameras, onCreateCamera, onUpdateCamera,
               </div>
 
               <div>
-                <label className="block text-xs font-semibold text-slate-500 mb-1">Stream URL (RTSP / HTTP)</label>
+                <label className="block text-xs font-semibold text-slate-500 mb-1">Browser-playable stream URL (MP4 / HLS)</label>
                 <input
                   type="text"
                   required
                   value={form.stream_url}
                   onChange={(e) => setForm({...form, stream_url: e.target.value})}
                   className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-slate-900 font-mono focus:outline-none focus:border-blue-500"
-                  placeholder="rtsp://192.168.1.100/live"
+                  placeholder="https://example.com/camera/stream.m3u8"
                 />
               </div>
 

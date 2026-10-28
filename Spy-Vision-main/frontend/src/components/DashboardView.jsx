@@ -33,6 +33,8 @@ import {
 
 export default function DashboardView({ 
   stats, 
+  backendOnline,
+  wsStatus,
   cameras, 
   alerts, 
   onAcknowledgeAlert, 
@@ -87,7 +89,7 @@ export default function DashboardView({
     }
   };
 
-  const handleCaptureWebcamSnapshot = () => {
+  const handleCaptureWebcamSnapshot = async () => {
     if (!webcamVideoRef.current || !hiddenCanvasRef.current) return;
     const video = webcamVideoRef.current;
     const canvas = hiddenCanvasRef.current;
@@ -97,16 +99,16 @@ export default function DashboardView({
     ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
     const dataUrl = canvas.toDataURL('image/jpeg');
     
-    if (onTriggerWebcamAlert) {
-      onTriggerWebcamAlert({
-        camera_id: 1,
+    if (onTriggerWebcamAlert && cameras[0]) {
+      const saved = await onTriggerWebcamAlert({
+        camera_id: cameras[0].id,
         event_type: 'INTRUSION',
         severity: 'CRITICAL',
         confidence: 0.99,
         snapshot_path: dataUrl,
-        message: 'Live Laptop Camera Alert: Target detected in real-time feed!'
+        message: 'Operator captured a webcam image for review.'
       });
-      alert('Snapshot captured from live laptop camera and alert sent to backend!');
+      if (saved) alert('Snapshot captured and alert saved.');
     }
   };
 
@@ -116,7 +118,7 @@ export default function DashboardView({
   const onlineCamCount = stats?.cameras ? stats.cameras.online : cameras.filter(c => c.status === 'ONLINE').length;
   const totalCamCount = stats?.cameras ? stats.cameras.total : cameras.length;
   const breachCount = stats?.intrusions_today !== undefined ? stats.intrusions_today : alerts.filter(a => a.event_type === 'INTRUSION').length;
-  const vehicleCount = stats?.vehicles_today !== undefined ? stats.vehicles_today : 1289;
+  const vehicleCount = stats?.vehicles_today ?? 0;
   const activeAlertCount = stats?.active_alerts !== undefined ? stats.active_alerts : activeAlerts.length;
 
   return (
@@ -128,11 +130,11 @@ export default function DashboardView({
           <div className="flex items-center gap-3">
             <span className="flex items-center gap-1.5 text-emerald-600 font-bold bg-emerald-50 px-3 py-1 rounded-full border border-emerald-200">
               <span className="w-2 h-2 rounded-full bg-emerald-500 animate-ping" />
-              REAL-TIME BACKEND SYNC ACTIVE
+              {backendOnline ? 'API CONNECTED' : 'API DISCONNECTED'}
             </span>
             <span className="text-slate-500 hidden sm:inline">|</span>
             <span className="text-slate-600 font-mono">
-              Live Feed: 30 FPS • Latency: 14ms • 1080p Stream
+              Alerts WebSocket: {wsStatus || 'DISCONNECTED'}
             </span>
           </div>
 
@@ -150,9 +152,9 @@ export default function DashboardView({
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
           <div className="light-card p-4 flex items-center justify-between">
             <div>
-              <p className="text-xs font-semibold text-slate-500">Live Camera Streams</p>
+              <p className="text-xs font-semibold text-slate-500">Registered Cameras</p>
               <h3 className="text-2xl font-extrabold text-slate-900 mt-1">{onlineCamCount} / {totalCamCount} Online</h3>
-              <p className="text-[11px] text-emerald-600 font-semibold mt-0.5">● Laptop Webcam Stream Ready</p>
+              <p className="text-[11px] text-emerald-600 font-semibold mt-0.5">Status reported by the API</p>
             </div>
             <div className="w-12 h-12 rounded-2xl bg-blue-50 text-blue-600 flex items-center justify-center">
               <Video className="w-6 h-6" />
@@ -161,9 +163,9 @@ export default function DashboardView({
 
           <div className="light-card p-4 flex items-center justify-between border-rose-200 bg-rose-50/30">
             <div>
-              <p className="text-xs font-bold text-rose-700">Perimeter Status</p>
+              <p className="text-xs font-bold text-rose-700">Intrusion Events Today</p>
               <h3 className="text-2xl font-extrabold text-rose-600 mt-1">{breachCount} Breaches</h3>
-              <p className="text-[11px] text-rose-600 font-medium mt-0.5">Real-time Zone Tripwires</p>
+              <p className="text-[11px] text-rose-600 font-medium mt-0.5">Recorded event count</p>
             </div>
             <div className="w-12 h-12 rounded-2xl bg-rose-600 text-white flex items-center justify-center shadow-xs animate-pulse">
               <AlertTriangle className="w-6 h-6" />
@@ -172,9 +174,9 @@ export default function DashboardView({
 
           <div className="light-card p-4 flex items-center justify-between">
             <div>
-              <p className="text-xs font-semibold text-slate-500">ANPR Vehicle Passes</p>
+              <p className="text-xs font-semibold text-slate-500">Vehicle Events Today</p>
               <h3 className="text-2xl font-extrabold text-slate-900 mt-1">{vehicleCount} Passes</h3>
-              <p className="text-[11px] text-amber-600 font-semibold mt-0.5">Live License Plate OCR</p>
+              <p className="text-[11px] text-amber-600 font-semibold mt-0.5">Recorded event count</p>
             </div>
             <div className="w-12 h-12 rounded-2xl bg-amber-50 text-amber-600 flex items-center justify-center">
               <Car className="w-6 h-6" />
@@ -211,9 +213,9 @@ export default function DashboardView({
                   <div className="flex items-center gap-2.5">
                     <span className={`w-3 h-3 rounded-full ${isWebcamActive ? 'bg-emerald-400 animate-ping' : 'bg-blue-400'}`} />
                     <span className="font-extrabold text-base tracking-tight">
-                      {isWebcamActive ? 'CAM 01: Live Laptop Webcam Stream' : 'CAM 01: Main Gate Live Surveillance Feed'}
+                      {isWebcamActive ? 'Browser Webcam Preview' : 'Camera Preview'}
                     </span>
-                    <span className="text-[11px] px-2.5 py-0.5 rounded-full bg-slate-800 text-slate-300 font-mono font-semibold">LIVE 1080p</span>
+                    <span className="text-[11px] px-2.5 py-0.5 rounded-full bg-slate-800 text-slate-300 font-mono font-semibold">LOCAL PREVIEW</span>
                     <span className="text-[11px] px-2 py-0.5 rounded-md bg-emerald-950/80 text-emerald-400 border border-emerald-800 font-mono font-bold">
                       {currentTime.toLocaleTimeString()}
                     </span>
@@ -234,7 +236,8 @@ export default function DashboardView({
                     {isWebcamActive && (
                       <button
                         onClick={handleCaptureWebcamSnapshot}
-                        className="px-4 py-2 bg-emerald-600 hover:bg-emerald-500 text-white rounded-xl text-xs font-bold cursor-pointer shadow-md"
+                        disabled={!cameras.length}
+                        className="px-4 py-2 bg-emerald-600 hover:bg-emerald-500 text-white rounded-xl text-xs font-bold cursor-pointer shadow-md disabled:cursor-not-allowed disabled:opacity-50"
                       >
                         📸 Snap & Alert
                       </button>
@@ -306,15 +309,16 @@ export default function DashboardView({
 
                 <div className="flex items-center gap-2">
                   <button 
-                    onClick={() => onTriggerWebcamAlert && onTriggerWebcamAlert({
-                      camera_id: 1,
+                    onClick={() => onTriggerWebcamAlert && cameras[0] && onTriggerWebcamAlert({
+                      camera_id: cameras[0].id,
                       event_type: 'INTRUSION',
                       severity: 'CRITICAL',
                       message: 'Perimeter tripwire breach simulated on Main Feed!'
                     })}
-                    className="px-4 py-1.5 bg-rose-600 hover:bg-rose-500 text-white font-bold rounded-xl cursor-pointer shadow-xs transition-colors"
+                    disabled={!cameras.length}
+                    className="px-4 py-1.5 bg-rose-600 hover:bg-rose-500 text-white font-bold rounded-xl cursor-pointer shadow-xs transition-colors disabled:cursor-not-allowed disabled:opacity-50"
                   >
-                    ⚡ Test Breach Drill
+                    ⚡ {cameras.length ? 'Test Breach Drill' : 'Add a camera to run a drill'}
                   </button>
                 </div>
               </div>

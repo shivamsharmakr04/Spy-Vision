@@ -1,9 +1,15 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Sparkles, ShieldAlert, Car, Zap, CheckCircle2, Smile, Package } from 'lucide-react';
 
 export default function SimulationController({ cameras, onTriggerEvent }) {
   const [selectedCamId, setSelectedCamId] = useState(cameras[0]?.id || 1);
   const [lastTriggered, setLastTriggered] = useState(null);
+
+  useEffect(() => {
+    if (cameras[0] && !cameras.some((camera) => camera.id === selectedCamId)) {
+      setSelectedCamId(cameras[0].id);
+    }
+  }, [cameras, selectedCamId]);
 
   const presets = [
     {
@@ -70,14 +76,14 @@ export default function SimulationController({ cameras, onTriggerEvent }) {
     }
   ];
 
-  const handleTrigger = (preset) => {
+  const handleTrigger = async (preset) => {
     const eventPayload = {
       ...preset.data,
       camera_id: selectedCamId,
       timestamp: new Date().toISOString()
     };
-    onTriggerEvent(eventPayload);
-    setLastTriggered(preset.title + ' at ' + new Date().toLocaleTimeString());
+    const saved = await onTriggerEvent(eventPayload);
+    if (saved) setLastTriggered(preset.title + ' at ' + new Date().toLocaleTimeString());
   };
 
   return (
@@ -112,6 +118,7 @@ export default function SimulationController({ cameras, onTriggerEvent }) {
         <select
           value={selectedCamId}
           onChange={(e) => setSelectedCamId(Number(e.target.value))}
+          disabled={!cameras.length}
           className="bg-slate-50 border border-slate-200 text-slate-900 text-xs rounded-xl px-3.5 py-2 font-bold focus:outline-none focus:border-blue-500 cursor-pointer"
         >
           {cameras.map((c) => (
@@ -121,6 +128,12 @@ export default function SimulationController({ cameras, onTriggerEvent }) {
           ))}
         </select>
       </div>
+
+      {!cameras.length && (
+        <div role="status" className="rounded-lg border border-amber-300 bg-amber-50 px-4 py-3 text-sm text-amber-900">
+          Add a camera in Camera Manager before simulating an event.
+        </div>
+      )}
 
       {/* Cards Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -140,7 +153,8 @@ export default function SimulationController({ cameras, onTriggerEvent }) {
 
               <button
                 onClick={() => handleTrigger(p)}
-                className={`w-full py-2.5 rounded-xl font-bold text-xs text-white flex items-center justify-center gap-2 cursor-pointer shadow-xs transition-all ${p.color}`}
+                disabled={!cameras.length}
+                className={`w-full py-2.5 rounded-xl font-bold text-xs text-white flex items-center justify-center gap-2 cursor-pointer shadow-xs transition-all disabled:cursor-not-allowed disabled:opacity-50 ${p.color}`}
               >
                 <Zap className="w-4 h-4 fill-current" />
                 Trigger {p.title}

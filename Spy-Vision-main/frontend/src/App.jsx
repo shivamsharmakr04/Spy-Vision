@@ -42,27 +42,32 @@ export default function App() {
   const [persons, setPersons] = useState(DEFAULT_WATCHLIST_PERSONS);
   const [vehicles, setVehicles] = useState(DEFAULT_WATCHLIST_VEHICLES);
   const [selectedCamForZone, setSelectedCamForZone] = useState(null);
+  const [backendOnline, setBackendOnline] = useState(false);
+  const [actionError, setActionError] = useState('');
 
   // Load initial data from REST API with default fallbacks
   const loadData = async () => {
     try {
       const statsRes = await api.getStats().catch(() => null);
-      if (statsRes) setStats(statsRes);
+      setBackendOnline(Boolean(statsRes));
+      if (!statsRes) return;
+      setStats(statsRes);
 
-      const camsRes = await api.getCameras().catch(() => null);
-      if (camsRes && camsRes.length > 0) setCameras(camsRes);
+      const [camsRes, zonesRes, alertsRes, eventsRes, personsRes, vehiclesRes] = await Promise.all([
+        api.getCameras().catch(() => null),
+        api.getZones().catch(() => null),
+        api.getAlerts().catch(() => null),
+        api.getEvents().catch(() => null),
+        api.getPersons().catch(() => null),
+        api.getVehicles().catch(() => null),
+      ]);
 
-      const alertsRes = await api.getAlerts().catch(() => null);
-      if (alertsRes && alertsRes.length > 0) setAlerts(alertsRes);
-
-      const eventsRes = await api.getEvents().catch(() => null);
-      if (eventsRes && eventsRes.items && eventsRes.items.length > 0) setEvents(eventsRes.items);
-
-      const personsRes = await api.getPersons().catch(() => null);
-      if (personsRes && personsRes.length > 0) setPersons(personsRes);
-
-      const vehiclesRes = await api.getVehicles().catch(() => null);
-      if (vehiclesRes && vehiclesRes.length > 0) setVehicles(vehiclesRes);
+      if (Array.isArray(camsRes)) setCameras(camsRes);
+      if (Array.isArray(zonesRes)) setZones(zonesRes);
+      if (Array.isArray(alertsRes)) setAlerts(alertsRes);
+      if (Array.isArray(eventsRes?.items)) setEvents(eventsRes.items);
+      if (Array.isArray(personsRes)) setPersons(personsRes);
+      if (Array.isArray(vehiclesRes)) setVehicles(vehiclesRes);
     } catch (err) {
       console.log('[Data Sync Note] Using default production dataset.');
     }
@@ -120,13 +125,23 @@ export default function App() {
 
   // Actions
   const handleAcknowledgeAlert = async (alertId) => {
-    setAlerts(prev => prev.map(a => a.id === alertId ? { ...a, status: 'ACKNOWLEDGED' } : a));
-    await api.acknowledgeAlert(alertId).catch(() => {});
+    setActionError('');
+    try {
+      await api.acknowledgeAlert(alertId);
+      await loadData();
+    } catch (err) {
+      setActionError(err.message);
+    }
   };
 
   const handleResolveAlert = async (alertId) => {
-    setAlerts(prev => prev.map(a => a.id === alertId ? { ...a, status: 'RESOLVED' } : a));
-    await api.resolveAlert(alertId).catch(() => {});
+    setActionError('');
+    try {
+      await api.resolveAlert(alertId);
+      await loadData();
+    } catch (err) {
+      setActionError(err.message);
+    }
   };
 
   const handleSelectCameraForZone = (camId) => {
@@ -135,91 +150,106 @@ export default function App() {
   };
 
   const handleSaveZone = async (zoneData) => {
-    const newZone = { id: Date.now(), ...zoneData };
-    setZones(prev => [...prev, newZone]);
-    await api.createZone(zoneData.camera_id, zoneData).catch(() => {});
+    setActionError('');
+    try {
+      await api.createZone(zoneData.camera_id, zoneData);
+      await loadData();
+    } catch (err) {
+      setActionError(err.message);
+    }
   };
 
   const handleDeleteZone = async (zoneId) => {
-    setZones(prev => prev.filter(z => z.id !== zoneId));
-    await api.deleteZone(zoneId).catch(() => {});
+    setActionError('');
+    try {
+      await api.deleteZone(zoneId);
+      await loadData();
+    } catch (err) {
+      setActionError(err.message);
+    }
   };
 
   const handleCreatePerson = async (personData) => {
-    const newPerson = { id: Date.now(), ...personData, created_at: new Date().toISOString() };
-    setPersons(prev => [newPerson, ...prev]);
-    await api.createPerson(personData).catch(() => {});
+    setActionError('');
+    try {
+      await api.createPerson(personData);
+      await loadData();
+    } catch (err) {
+      setActionError(err.message);
+    }
   };
 
   const handleDeletePerson = async (personId) => {
-    setPersons(prev => prev.filter(p => p.id !== personId));
-    await api.deletePerson(personId).catch(() => {});
+    setActionError('');
+    try {
+      await api.deletePerson(personId);
+      await loadData();
+    } catch (err) {
+      setActionError(err.message);
+    }
   };
 
   const handleCreateVehicle = async (vehicleData) => {
-    const newVehicle = { id: Date.now(), ...vehicleData, created_at: new Date().toISOString() };
-    setVehicles(prev => [newVehicle, ...prev]);
-    await api.createVehicle(vehicleData).catch(() => {});
+    setActionError('');
+    try {
+      await api.createVehicle(vehicleData);
+      await loadData();
+    } catch (err) {
+      setActionError(err.message);
+    }
   };
 
   const handleDeleteVehicle = async (vehicleId) => {
-    setVehicles(prev => prev.filter(v => v.id !== vehicleId));
-    await api.deleteVehicle(vehicleId).catch(() => {});
+    setActionError('');
+    try {
+      await api.deleteVehicle(vehicleId);
+      await loadData();
+    } catch (err) {
+      setActionError(err.message);
+    }
   };
 
   const handleCreateCamera = async (camData) => {
-    const newCam = { id: Date.now(), ...camData, created_at: new Date().toISOString() };
-    setCameras(prev => [...prev, newCam]);
-    await api.createCamera(camData).catch(() => {});
+    setActionError('');
+    try {
+      await api.createCamera(camData);
+      await loadData();
+    } catch (err) {
+      setActionError(err.message);
+    }
   };
 
   const handleDeleteCamera = async (camId) => {
-    setCameras(prev => prev.filter(c => c.id !== camId));
-    await api.deleteCamera(camId).catch(() => {});
+    setActionError('');
+    try {
+      await api.deleteCamera(camId);
+      await loadData();
+    } catch (err) {
+      setActionError(err.message);
+    }
   };
 
   const handleHeartbeat = async (camId) => {
-    setCameras(prev => prev.map(c => c.id === camId ? { ...c, status: 'ONLINE' } : c));
-    await api.sendHeartbeat(camId).catch(() => {});
-    alert(`Heartbeat ping acknowledged for Camera #${camId}!`);
+    setActionError('');
+    try {
+      await api.sendHeartbeat(camId);
+      await loadData();
+    } catch (err) {
+      setActionError(err.message);
+    }
   };
 
   const handleTriggerSimulatedEvent = async (eventData) => {
-    const newEventId = Date.now();
-    const newAlertId = newEventId + 100;
-    const cam = cameras.find(c => c.id === eventData.camera_id) || cameras[0];
-
-    const newAlert = {
-      id: newAlertId,
-      event_id: newEventId,
-      camera_id: eventData.camera_id,
-      camera_name: cam?.name || `Camera #${eventData.camera_id}`,
-      event_type: eventData.event_type,
-      severity: eventData.severity,
-      status: 'ACTIVE',
-      message: eventData.message,
-      timestamp: new Date().toISOString(),
-      snapshot_path: eventData.snapshot_path
-    };
-
-    const newEvt = {
-      id: newEventId,
-      camera_id: eventData.camera_id,
-      event_type: eventData.event_type,
-      severity: eventData.severity,
-      timestamp: new Date().toISOString(),
-      plate_number: eventData.plate_number || null,
-      person_name: eventData.person_name || null,
-      confidence: eventData.confidence || 0.96,
-      snapshot_path: eventData.snapshot_path
-    };
-
-    setAlerts(prev => [newAlert, ...prev]);
-    setEvents(prev => [newEvt, ...prev]);
-
-    if (audioEnabled) playAlertSound();
-
-    await api.triggerSimulatedEvent(eventData).catch(() => {});
+    setActionError('');
+    try {
+      await api.triggerSimulatedEvent(eventData);
+      await loadData();
+      if (audioEnabled) playAlertSound();
+      return true;
+    } catch (err) {
+      setActionError(err.message);
+      return false;
+    }
   };
 
   return (
@@ -240,9 +270,21 @@ export default function App() {
 
       {/* Main Content Router */}
       <main className="flex-1">
+        {!backendOnline && (
+          <div role="status" className="mx-4 mt-4 rounded-lg border border-amber-300 bg-amber-50 px-4 py-2 text-sm text-amber-900">
+            Backend unavailable. Start the API to save changes and receive live alerts.
+          </div>
+        )}
+        {actionError && (
+          <div role="alert" className="mx-4 mt-3 rounded-lg border border-rose-300 bg-rose-50 px-4 py-2 text-sm text-rose-900">
+            Request failed: {actionError}
+          </div>
+        )}
         {activeView === 'dashboard' && (
           <DashboardView
             stats={stats}
+            backendOnline={backendOnline}
+            wsStatus={wsStatus}
             cameras={cameras}
             alerts={alerts}
             onAcknowledgeAlert={handleAcknowledgeAlert}

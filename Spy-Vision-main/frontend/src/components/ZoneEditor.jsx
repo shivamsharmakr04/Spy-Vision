@@ -12,6 +12,10 @@ export default function ZoneEditor({ cameras, selectedCameraId, onSaveZone, onDe
   const activeCamera = cameras.find(c => c.id === activeCamId) || cameras[0];
 
   useEffect(() => {
+    if (selectedCameraId) setActiveCamId(selectedCameraId);
+  }, [selectedCameraId]);
+
+  useEffect(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
     const ctx = canvas.getContext('2d');
@@ -77,8 +81,8 @@ export default function ZoneEditor({ cameras, selectedCameraId, onSaveZone, onDe
     const canvas = canvasRef.current;
     if (!canvas) return;
     const rect = canvas.getBoundingClientRect();
-    const x = e.clientX - rect.left;
-    const y = e.clientY - rect.top;
+    const x = (e.clientX - rect.left) * (canvas.width / rect.width);
+    const y = (e.clientY - rect.top) * (canvas.height / rect.height);
 
     setPoints([...points, { x, y }]);
   };
@@ -123,7 +127,7 @@ export default function ZoneEditor({ cameras, selectedCameraId, onSaveZone, onDe
               Detection Zone Configurator
             </h2>
             <p className="text-xs text-slate-500 font-medium mt-0.5">
-              Draw virtual fence boundaries and security polygons directly over live camera streams.
+              Store polygon boundaries for camera feeds. This prototype does not run detection against them.
             </p>
           </div>
 
@@ -242,9 +246,9 @@ export default function ZoneEditor({ cameras, selectedCameraId, onSaveZone, onDe
 
                 <button
                   onClick={handleSave}
-                  disabled={points.length < 3}
+                  disabled={points.length < 3 || !activeCamera}
                   className={`w-full py-2.5 rounded-xl font-bold text-xs flex items-center justify-center gap-2 cursor-pointer transition-colors ${
-                    points.length >= 3
+                    points.length >= 3 && activeCamera
                       ? 'bg-blue-600 hover:bg-blue-500 text-white shadow-xs'
                       : 'bg-slate-100 text-slate-400 cursor-not-allowed'
                   }`}

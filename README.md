@@ -140,8 +140,17 @@ pip install -r requirements.txt
 Create your environment file from the variables expected by `app.config`, then start the API:
 
 ```bash
+cp .env.example .env
+# Set AI_API_KEY to a private local value before using the AI event endpoint.
 python -m uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
 ```
+
+On Windows PowerShell, use `Copy-Item .env.example .env` instead of `cp`.
+The app applies Alembic migrations automatically when the backend starts. The local
+example enables the development-only event simulator; keep `DEBUG=false` outside
+local development. The initial database is empty, so register a camera in Camera
+Manager before testing event simulations. Use a browser-playable stream URL such as
+MP4 or HLS; browsers cannot play RTSP URLs directly.
 
 Backend endpoints:
 
@@ -172,7 +181,9 @@ cd IBVAP/Spy-Vision-main/backend
 docker compose up --build
 ```
 
-**Important:** the Compose configuration expects a backend `.env` file. Do not commit real credentials. Keep local secrets in `.env` and provide safe example values in documentation when needed.
+The Compose configuration reads optional values from `backend/.env`. Do not commit
+real credentials. Keep local secrets in `.env` and use `.env.example` only as a
+template. Simulation is disabled in Docker unless `DEBUG=true` is set explicitly.
 
 ## 🔌 API Surface
 
@@ -228,6 +239,10 @@ Before production deployment:
 - Review media upload and file-serving controls.
 - Add audit and access-control tests.
 - Run dependency and code-security scanning.
+
+The browser UI does not contain the AI API key. Direct event ingestion at
+`POST /api/v1/events` requires the `X-AI-API-Key` value configured on the backend.
+The browser's synthetic-event endpoint is available only when `DEBUG=true`.
 
 ## 📌 Project Status
 

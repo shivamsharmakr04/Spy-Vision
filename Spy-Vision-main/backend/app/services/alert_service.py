@@ -9,6 +9,9 @@ ALERT_EVENT_TYPES = {
     "INTRUSION": "HIGH",
     "NIGHT_MOVEMENT": "HIGH",
     "FACE_MATCH": "HIGH",
+    "ANPR_MATCH": "HIGH",
+    "OBJECT_DETECTED": "HIGH",
+    "REACTION_ANALYSIS": "HIGH",
 }
 
 
@@ -22,6 +25,9 @@ def should_create_alert(
         return True
 
     # Watchlist vehicle match
+    if event.event_type == "ANPR_MATCH":
+        return True
+
     if event.event_type == "PLATE_DETECTED" and event.plate_number:
         vehicle = (
             db.query(WatchlistVehicle)
@@ -45,7 +51,7 @@ def create_alert(
     if not should_create_alert(db, event):
         return None
 
-    if event.event_type == "PLATE_DETECTED":
+    if event.event_type in {"PLATE_DETECTED", "ANPR_MATCH"}:
         severity = "HIGH"
         message = f"Watchlist vehicle detected: {event.plate_number}"
     else:

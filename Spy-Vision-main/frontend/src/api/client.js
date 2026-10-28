@@ -4,12 +4,13 @@ const API_BASE = '/api/v1';
 
 async function fetchJSON(endpoint, options = {}) {
   try {
+    const { headers: requestHeaders, ...requestOptions } = options;
     const res = await fetch(`${API_BASE}${endpoint}`, {
       headers: {
         'Content-Type': 'application/json',
-        ...options.headers,
+        ...requestHeaders,
       },
-      ...options,
+      ...requestOptions,
     });
     if (!res.ok) {
       const errorData = await res.json().catch(() => ({ detail: res.statusText }));
@@ -39,14 +40,22 @@ export const api = {
   sendHeartbeat: (id) => fetchJSON(`/cameras/${id}/heartbeat`, { method: 'POST' }),
 
   // Zones
-  getZones: (cameraId) => fetchJSON(`/cameras/${cameraId}/zones`),
+  getZones: async (cameraId) => {
+    const zones = await fetchJSON(cameraId === undefined ? '/zones' : `/cameras/${cameraId}/zones`);
+    return zones.map((zone) => ({
+      ...zone,
+      zone_type: zone.zone_type || zone.type,
+      is_active: zone.is_active ?? zone.enabled,
+    }));
+  },
   createZone: (cameraId, data) => {
     // Transform frontend zone_type -> backend "type" field
     const payload = {
       name: data.name,
       type: data.zone_type || data.type || 'INTRUSION_ZONE',
-      coordinates: data.coordinates || {},
+      coordinates: data.coordinates || [],
       enabled: data.is_active !== undefined ? data.is_active : true,
+      sensitivity: data.sensitivity ?? 0.85,
     };
     return fetchJSON(`/cameras/${cameraId}/zones`, { method: 'POST', body: JSON.stringify(payload) });
   },
@@ -66,11 +75,18 @@ export const api = {
         query.append(key, val);
       }
     });
-    return fetchJSON(`/events?${query.toString()}`);
+    const search = query.toString();
+    return fetchJSON(search ? `/events?${search}` : '/events');
   },
 
   // Watchlist - Persons
-  getPersons: () => fetchJSON('/watchlist/persons'),
+  getPersons: async () => (await fetchJSON('/watchlist/persons')).map((person) => ({
+    ...person,
+    full_name: person.full_name || person.name,
+    suspect_id: person.suspect_id || person.external_reference,
+    photo_url: person.photo_url || person.image_path,
+    notes: person.notes || person.description,
+  })),
   createPerson: (data) => {
     // Transform frontend person fields -> backend WatchlistPersonCreate schema
     const payload = {
@@ -86,7 +102,10 @@ export const api = {
   deletePerson: (id) => fetchJSON(`/watchlist/persons/${id}`, { method: 'DELETE' }),
 
   // Watchlist - Vehicles
-  getVehicles: () => fetchJSON('/watchlist/vehicles'),
+  getVehicles: async () => (await fetchJSON('/watchlist/vehicles')).map((vehicle) => ({
+    ...vehicle,
+    notes: vehicle.notes || vehicle.description,
+  })),
   createVehicle: (data) => {
     // Transform frontend vehicle fields -> backend WatchlistVehicleCreate schema
     const payload = {
@@ -100,7 +119,7 @@ export const api = {
   updateVehicle: (id, data) => fetchJSON(`/watchlist/vehicles/${id}`, { method: 'PUT', body: JSON.stringify(data) }),
   deleteVehicle: (id) => fetchJSON(`/watchlist/vehicles/${id}`, { method: 'DELETE' }),
 
-  // Simulation Trigger (Creates events with AI API Key if configured)
+  // Development-only endpoint; the backend rejects it when DEBUG is disabled.
   triggerSimulatedEvent: (eventData) => {
     // Transform frontend event -> backend EventCreate schema
     const payload = {
@@ -114,9 +133,8 @@ export const api = {
       snapshot_path: eventData.snapshot_path || null,
       clip_path: eventData.clip_path || null,
     };
-    return fetchJSON('/events', {
+    return fetchJSON('/events/simulate', {
       method: 'POST',
-      headers: { 'X-AI-API-Key': 'development-secret-key' },
       body: JSON.stringify(payload),
     });
   },
@@ -130,9 +148,11 @@ export class AlertWebSocketManager {
     this.ws = null;
     this.reconnectTimer = null;
     this.isConnecting = false;
+    this.shouldReconnect = true;
   }
 
   connect() {
+    this.shouldReconnect = true;
     if (this.ws && (this.ws.readyState === WebSocket.OPEN || this.ws.readyState === WebSocket.CONNECTING)) {
       return;
     }
@@ -181,6 +201,7 @@ export class AlertWebSocketManager {
   }
 
   scheduleReconnect() {
+    if (!this.shouldReconnect) return;
     if (this.reconnectTimer) clearTimeout(this.reconnectTimer);
     this.reconnectTimer = setTimeout(() => {
       this.connect();
@@ -188,6 +209,7 @@ export class AlertWebSocketManager {
   }
 
   disconnect() {
+    this.shouldReconnect = false;
     if (this.reconnectTimer) clearTimeout(this.reconnectTimer);
     if (this.ws) {
       this.ws.close();
