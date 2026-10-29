@@ -6,10 +6,12 @@
   --color-oatmeal-200: #ebe3d3;
   --color-oatmeal-300: #ded1bb;
   --color-oatmeal-400: #c9b79b;
-  --color-oatmeal-500: #b09c7d;
-  --color-oatmeal-800: #24201a;
-  --color-oatmeal-900: #171410;
-  --color-oatmeal-950: #0d1a13;
+  --color-oatmeal-500: #3a4d42;
+  --color-oatmeal-600: #26362d;
+  --color-oatmeal-700: #19251e;
+  --color-oatmeal-800: #111a14;
+  --color-oatmeal-900: #0a110d;
+  --color-oatmeal-950: #050b08;
 
   --color-pine-50: #f0f7f3;
   --color-pine-100: #dceee3;
@@ -40,83 +42,91 @@
   :root {
     --font-sans: 'Plus Jakarta Sans', 'Inter', system-ui, -apple-system, sans-serif;
     --font-mono: 'JetBrains Mono', ui-monospace, monospace;
-    --app-text-primary: #0d1e16;
-    --app-text-secondary: #273e31;
-    --app-text-muted: #435e50;
+    --app-text-primary: #050b08;
+    --app-text-secondary: #14231b;
+    --app-text-muted: #24382c;
   }
 
   html {
     font-family: var(--font-sans);
+    color: #050b08;
   }
 
   body {
     background-color: #f5f1e8;
-    color: var(--app-text-primary);
+    color: #050b08;
     font-family: var(--font-sans);
     min-height: 100vh;
+    font-weight: 500;
     transition: background-color 0.25s ease, color 0.25s ease;
+  }
+
+  p, span, label, input, select, textarea, button, h1, h2, h3, h4, h5, h6, th, td {
+    color: inherit;
   }
 
   body.dark,
   html.dark body {
-    background-color: #09130e;
+    background-color: #070e0a;
     color: #f7f4fb;
-    --app-text-primary: #f5f1e8;
-    --app-text-secondary: #d1dfd6;
-    --app-text-muted: #8ea396;
+    --app-text-primary: #f7f4fb;
+    --app-text-secondary: #e2ede6;
+    --app-text-muted: #b4ccbe;
   }
 }
 
-/* Elevated Card in Oatmeal & Deep Forest Pine text */
+/* Elevated Card in Oatmeal & Bold Dark Text */
 .light-card,
 .tactical-card {
-  background: rgba(253, 251, 247, 0.98);
-  border: 1px solid rgba(222, 209, 187, 0.8);
-  color: #0d1e16;
+  background: rgba(253, 251, 247, 0.99);
+  border: 1px solid rgba(214, 199, 175, 0.9);
+  color: #050b08;
   border-radius: 1.25rem;
-  box-shadow: 0 4px 20px -2px rgba(16, 45, 30, 0.06), 0 2px 6px -1px rgba(16, 45, 30, 0.03);
+  box-shadow: 0 4px 20px -2px rgba(5, 11, 8, 0.08), 0 2px 6px -1px rgba(5, 11, 8, 0.04);
   transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.2s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.2s ease;
 }
 
 .dark .light-card,
 .dark .tactical-card {
-  background: rgba(13, 27, 20, 0.85);
+  background: rgba(13, 27, 20, 0.9);
   backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
-  border: 1px solid rgba(41, 111, 75, 0.4);
-  color: #f5f1e8;
-  box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(197, 176, 223, 0.1);
+  border: 1px solid rgba(41, 111, 75, 0.45);
+  color: #f7f4fb;
+  box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.6), inset 0 1px 0 rgba(197, 176, 223, 0.1);
 }
 
 .light-card:hover,
 .tactical-card:hover {
-  border-color: rgba(141, 102, 185, 0.5);
+  border-color: rgba(141, 102, 185, 0.6);
 }
 
 .glass-panel {
-  background: rgba(253, 251, 247, 0.92);
+  background: rgba(253, 251, 247, 0.95);
   backdrop-filter: blur(12px);
-  border: 1px solid rgba(222, 209, 187, 0.7);
+  border: 1px solid rgba(214, 199, 175, 0.85);
   border-radius: 1.25rem;
-  color: #0d1e16;
+  color: #050b08;
 }
 
 .dark .glass-panel {
-  background: rgba(13, 27, 20, 0.8);
+  background: rgba(13, 27, 20, 0.85);
   backdrop-filter: blur(16px);
-  border: 1px solid rgba(41, 111, 75, 0.4);
-  color: #f5f1e8;
+  border: 1px solid rgba(41, 111, 75, 0.45);
+  color: #f7f4fb;
 }
 
 .glass-alert {
-  background: rgba(255, 241, 242, 0.9);
-  border: 1px solid rgba(254, 205, 211, 0.9);
+  background: rgba(255, 241, 242, 0.92);
+  border: 1px solid rgba(254, 205, 211, 0.95);
   border-radius: 1.25rem;
+  color: #881337;
 }
 
 .dark .glass-alert {
-  background: rgba(136, 19, 55, 0.2);
-  border: 1px solid rgba(225, 29, 72, 0.4);
+  background: rgba(136, 19, 55, 0.25);
+  border: 1px solid rgba(225, 29, 72, 0.45);
+  color: #ffe4e6;
 }
 
 /* Custom Scrollbars in Oatmeal & Soft Lilac */
@@ -130,7 +140,7 @@
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #ded1bb;
+  background: #c9b79b;
   border-radius: 9999px;
 }
 
