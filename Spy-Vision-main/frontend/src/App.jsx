@@ -310,7 +310,7 @@ export default function App() {
 
   return (
     <div className={`min-h-screen transition-colors duration-300 flex flex-col font-sans ${
-      theme === 'dark' ? 'bg-[#0c1511] text-oatmeal-50' : 'bg-[#f5f1e8] text-oatmeal-950'
+      theme === 'dark' ? 'bg-[#0a140f] text-[#f5f1e8]' : 'bg-[#f5f1e8] text-[#0d1e16]'
     }`}>
       {/* Top Navbar */}
       <Navbar
@@ -394,9 +394,19 @@ export default function App() {
       </main>
 
       {/* Oatmeal & Pine Command Footer */}
-      <footer className="border-t border-oatmeal-300 dark:border-pine-900 bg-oatmeal-50/90 dark:bg-[#0e1c16]/90 py-3 px-4 text-center text-oatmeal-800 dark:text-oatmeal-300 text-xs font-mono backdrop-blur-md flex flex-wrap items-center justify-between gap-2">
-        <span>IBVAP v1.0.0 — Intelligent Border Surveillance Platform | Ministry of Home Affairs</span>
-        <span className="text-[11px] text-pine-800 dark:text-lilac-300 font-bold flex items-center gap-1.5">
+      <footer className="border-t border-oatmeal-300 dark:border-pine-900 bg-oatmeal-50/95 dark:bg-[#0c1812]/95 py-3 px-4 text-center text-[#273e31] dark:text-oatmeal-300 text-xs font-mono backdrop-blur-md flex flex-wrap items-center justify-between gap-2">
+        <div className="flex items-center gap-3">
+          <span>IBVAP v1.0.0 — Intelligent Border Surveillance Platform | Ministry of Home Affairs</span>
+          <a 
+            href="https://github.com/shivamsharmakr04/Spy-Vision" 
+            target="_blank" 
+            rel="noopener noreferrer" 
+            className="text-pine-800 dark:text-lilac-300 hover:underline font-bold"
+          >
+            GitHub: shivamsharmakr04/Spy-Vision
+          </a>
+        </div>
+        <span className="text-[11px] text-pine-900 dark:text-lilac-300 font-bold flex items-center gap-1.5">
           <span className="w-2 h-2 rounded-full bg-pine-600 dark:bg-pine-400" />
           ACTIVE DEFENSE NODE • OPERATOR: {currentUser.username.toUpperCase()}
         </span>

@@ -7,9 +7,9 @@
   --color-oatmeal-300: #ded1bb;
   --color-oatmeal-400: #c9b79b;
   --color-oatmeal-500: #b09c7d;
-  --color-oatmeal-800: #2c2720;
-  --color-oatmeal-900: #1e1a15;
-  --color-oatmeal-950: #12100d;
+  --color-oatmeal-800: #24201a;
+  --color-oatmeal-900: #171410;
+  --color-oatmeal-950: #0d1a13;
 
   --color-pine-50: #f0f7f3;
   --color-pine-100: #dceee3;
@@ -18,10 +18,10 @@
   --color-pine-400: #59a67d;
   --color-pine-500: #388a5e;
   --color-pine-600: #296f4b;
-  --color-pine-700: #21593c;
-  --color-pine-800: #1b4332;
-  --color-pine-900: #153728;
-  --color-pine-950: #0a1f16;
+  --color-pine-700: #1e5237;
+  --color-pine-800: #163e2a;
+  --color-pine-900: #102d1e;
+  --color-pine-950: #0a1d13;
 
   --color-lilac-50: #f7f4fb;
   --color-lilac-100: #eee7f6;
@@ -40,6 +40,9 @@
   :root {
     --font-sans: 'Plus Jakarta Sans', 'Inter', system-ui, -apple-system, sans-serif;
     --font-mono: 'JetBrains Mono', ui-monospace, monospace;
+    --app-text-primary: #0d1e16;
+    --app-text-secondary: #273e31;
+    --app-text-muted: #435e50;
   }
 
   html {
@@ -48,7 +51,7 @@
 
   body {
     background-color: #f5f1e8;
-    color: #1c1813;
+    color: var(--app-text-primary);
     font-family: var(--font-sans);
     min-height: 100vh;
     transition: background-color 0.25s ease, color 0.25s ease;
@@ -56,27 +59,32 @@
 
   body.dark,
   html.dark body {
-    background-color: #0c1511;
+    background-color: #09130e;
     color: #f7f4fb;
+    --app-text-primary: #f5f1e8;
+    --app-text-secondary: #d1dfd6;
+    --app-text-muted: #8ea396;
   }
 }
 
-/* Oatmeal & Pine Elevated Card */
+/* Elevated Card in Oatmeal & Deep Forest Pine text */
 .light-card,
 .tactical-card {
-  background: rgba(253, 251, 247, 0.96);
-  border: 1px solid rgba(222, 209, 187, 0.7);
+  background: rgba(253, 251, 247, 0.98);
+  border: 1px solid rgba(222, 209, 187, 0.8);
+  color: #0d1e16;
   border-radius: 1.25rem;
-  box-shadow: 0 4px 20px -2px rgba(27, 67, 50, 0.05), 0 2px 6px -1px rgba(27, 67, 50, 0.02);
+  box-shadow: 0 4px 20px -2px rgba(16, 45, 30, 0.06), 0 2px 6px -1px rgba(16, 45, 30, 0.03);
   transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.2s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.2s ease;
 }
 
 .dark .light-card,
 .dark .tactical-card {
-  background: rgba(14, 28, 22, 0.8);
+  background: rgba(13, 27, 20, 0.85);
   backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
-  border: 1px solid rgba(41, 111, 75, 0.35);
+  border: 1px solid rgba(41, 111, 75, 0.4);
+  color: #f5f1e8;
   box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(197, 176, 223, 0.1);
 }
 
@@ -86,20 +94,22 @@
 }
 
 .glass-panel {
-  background: rgba(253, 251, 247, 0.9);
+  background: rgba(253, 251, 247, 0.92);
   backdrop-filter: blur(12px);
-  border: 1px solid rgba(222, 209, 187, 0.6);
+  border: 1px solid rgba(222, 209, 187, 0.7);
   border-radius: 1.25rem;
+  color: #0d1e16;
 }
 
 .dark .glass-panel {
-  background: rgba(14, 28, 22, 0.75);
+  background: rgba(13, 27, 20, 0.8);
   backdrop-filter: blur(16px);
   border: 1px solid rgba(41, 111, 75, 0.4);
+  color: #f5f1e8;
 }
 
 .glass-alert {
-  background: rgba(255, 241, 242, 0.85);
+  background: rgba(255, 241, 242, 0.9);
   border: 1px solid rgba(254, 205, 211, 0.9);
   border-radius: 1.25rem;
 }
@@ -125,11 +135,11 @@
 }
 
 .dark ::-webkit-scrollbar-thumb {
-  background: #21593c;
+  background: #1e5237;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #a788cb;
+  background: #8d66b9;
 }
 
 .dark ::-webkit-scrollbar-thumb:hover {
