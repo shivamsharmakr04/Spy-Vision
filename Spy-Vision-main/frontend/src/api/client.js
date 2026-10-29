@@ -2,24 +2,62 @@
 
 const API_BASE = '/api/v1';
 
+export const authStorage = {
+  getToken: () => localStorage.getItem('ibvap_auth_token'),
+  setToken: (token) => {
+    if (token) {
+      localStorage.setItem('ibvap_auth_token', token);
+    } else {
+      localStorage.removeItem('ibvap_auth_token');
+    }
+  },
+  clearToken: () => localStorage.removeItem('ibvap_auth_token'),
+  getUser: () => {
+    try {
+      const data = localStorage.getItem('ibvap_operator');
+      return data ? JSON.parse(data) : null;
+    } catch {
+      return null;
+    }
+  },
+  setUser: (user) => {
+    if (user) {
+      localStorage.setItem('ibvap_operator', JSON.stringify(user));
+    } else {
+      localStorage.removeItem('ibvap_operator');
+    }
+  },
+  clearUser: () => localStorage.removeItem('ibvap_operator'),
+};
+
 async function fetchJSON(endpoint, options = {}) {
   try {
-    const { headers: requestHeaders, ...requestOptions } = options;
+    const { headers: requestHeaders = {}, ...requestOptions } = options;
+    const token = authStorage.getToken();
+
+    const headers = {
+      'Content-Type': 'application/json',
+      ...requestHeaders,
+    };
+
+    if (token && !headers['Authorization']) {
+      headers['Authorization'] = `Bearer ${token}`;
+    }
+
     const res = await fetch(`${API_BASE}${endpoint}`, {
-      headers: {
-        'Content-Type': 'application/json',
-        ...requestHeaders,
-      },
+      headers,
       ...requestOptions,
     });
+
     if (!res.ok) {
       const errorData = await res.json().catch(() => ({ detail: res.statusText }));
       throw new Error(errorData.detail || `HTTP Error ${res.status}`);
     }
-    // Handle 204 No Content (e.g. DELETE responses)
+
     if (res.status === 204) {
       return null;
     }
+
     return await res.json();
   } catch (err) {
     console.warn(`[API Warning] ${endpoint}:`, err.message);
@@ -28,6 +66,42 @@ async function fetchJSON(endpoint, options = {}) {
 }
 
 export const api = {
+  // Authentication & Operator Verification
+  register: async (userData) => {
+    const res = await fetchJSON('/auth/register', {
+      method: 'POST',
+      body: JSON.stringify(userData),
+    });
+    if (res.token) {
+      authStorage.setToken(res.token);
+      authStorage.setUser(res.user);
+    }
+    return res;
+  },
+
+  login: async (credentials) => {
+    const res = await fetchJSON('/auth/login', {
+      method: 'POST',
+      body: JSON.stringify(credentials),
+    });
+    if (res.token) {
+      authStorage.setToken(res.token);
+      authStorage.setUser(res.user);
+    }
+    return res;
+  },
+
+  getMe: () => fetchJSON('/auth/me'),
+
+  logout: async () => {
+    try {
+      await fetchJSON('/auth/logout', { method: 'POST' });
+    } finally {
+      authStorage.clearToken();
+      authStorage.clearUser();
+    }
+  },
+
   // Dashboard
   getStats: () => fetchJSON('/dashboard/stats'),
 
@@ -49,7 +123,6 @@ export const api = {
     }));
   },
   createZone: (cameraId, data) => {
-    // Transform frontend zone_type -> backend "type" field
     const payload = {
       name: data.name,
       type: data.zone_type || data.type || 'INTRUSION_ZONE',
@@ -88,7 +161,6 @@ export const api = {
     notes: person.notes || person.description,
   })),
   createPerson: (data) => {
-    // Transform frontend person fields -> backend WatchlistPersonCreate schema
     const payload = {
       name: data.full_name || data.name,
       external_reference: data.suspect_id || data.external_reference || null,
@@ -107,7 +179,6 @@ export const api = {
     notes: vehicle.notes || vehicle.description,
   })),
   createVehicle: (data) => {
-    // Transform frontend vehicle fields -> backend WatchlistVehicleCreate schema
     const payload = {
       plate_number: data.plate_number,
       vehicle_type: data.vehicle_type || null,
@@ -118,26 +189,6 @@ export const api = {
   },
   updateVehicle: (id, data) => fetchJSON(`/watchlist/vehicles/${id}`, { method: 'PUT', body: JSON.stringify(data) }),
   deleteVehicle: (id) => fetchJSON(`/watchlist/vehicles/${id}`, { method: 'DELETE' }),
-
-  // Development-only endpoint; the backend rejects it when DEBUG is disabled.
-  triggerSimulatedEvent: (eventData) => {
-    // Transform frontend event -> backend EventCreate schema
-    const payload = {
-      camera_id: eventData.camera_id,
-      event_type: eventData.event_type,
-      timestamp: eventData.timestamp || new Date().toISOString(),
-      confidence: eventData.confidence || null,
-      severity: eventData.severity || 'LOW',
-      metadata: eventData.metadata || null,
-      plate_number: eventData.plate_number || null,
-      snapshot_path: eventData.snapshot_path || null,
-      clip_path: eventData.clip_path || null,
-    };
-    return fetchJSON('/events/simulate', {
-      method: 'POST',
-      body: JSON.stringify(payload),
-    });
-  },
 };
 
 // WebSocket Alert Manager
@@ -148,71 +199,72 @@ export class AlertWebSocketManager {
     this.ws = null;
     this.reconnectTimer = null;
     this.isConnecting = false;
-    this.shouldReconnect = true;
   }
 
   connect() {
-    this.shouldReconnect = true;
     if (this.ws && (this.ws.readyState === WebSocket.OPEN || this.ws.readyState === WebSocket.CONNECTING)) {
       return;
     }
 
-    const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
-    const host = window.location.host;
-    const wsUrl = `${protocol}//${host}/ws/alerts`;
-
     this.isConnecting = true;
-    this.onStatusChange?.('CONNECTING');
+    this.onStatusChange('CONNECTING');
+
+    const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
+    const wsUrl = `${protocol}//${window.location.host}/ws/alerts`;
 
     try {
       this.ws = new WebSocket(wsUrl);
 
       this.ws.onopen = () => {
         this.isConnecting = false;
-        this.onStatusChange?.('CONNECTED');
-        console.log('[WebSocket] Connected to alert stream');
+        this.onStatusChange('CONNECTED');
+        if (this.reconnectTimer) {
+          clearTimeout(this.reconnectTimer);
+          this.reconnectTimer = null;
+        }
       };
 
       this.ws.onmessage = (event) => {
         try {
           const data = JSON.parse(event.data);
-          this.onMessage?.(data);
-        } catch (err) {
-          console.error('[WebSocket Error] Failed to parse message:', err);
+          this.onMessage(data);
+        } catch (e) {
+          console.warn('[WS Parse Error]', e);
         }
+      };
+
+      this.ws.onerror = () => {
+        this.onStatusChange('ERROR');
       };
 
       this.ws.onclose = () => {
         this.isConnecting = false;
-        this.onStatusChange?.('DISCONNECTED');
+        this.onStatusChange('DISCONNECTED');
         this.scheduleReconnect();
       };
-
-      this.ws.onerror = (err) => {
-        this.isConnecting = false;
-        this.onStatusChange?.('ERROR');
-        console.warn('[WebSocket Error] Connection error, fallback active.');
-      };
-    } catch (err) {
+    } catch {
       this.isConnecting = false;
-      this.onStatusChange?.('DISCONNECTED');
+      this.onStatusChange('ERROR');
       this.scheduleReconnect();
     }
   }
 
   scheduleReconnect() {
-    if (!this.shouldReconnect) return;
-    if (this.reconnectTimer) clearTimeout(this.reconnectTimer);
+    if (this.reconnectTimer) return;
     this.reconnectTimer = setTimeout(() => {
+      this.reconnectTimer = null;
       this.connect();
     }, 5000);
   }
 
   disconnect() {
-    this.shouldReconnect = false;
-    if (this.reconnectTimer) clearTimeout(this.reconnectTimer);
+    if (this.reconnectTimer) {
+      clearTimeout(this.reconnectTimer);
+      this.reconnectTimer = null;
+    }
     if (this.ws) {
       this.ws.close();
+      this.ws = null;
     }
   }
 }

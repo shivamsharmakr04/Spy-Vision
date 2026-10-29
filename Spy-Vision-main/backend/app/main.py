@@ -23,6 +23,7 @@ from app.routers.zones import router as zones_router
 from app.routers.events import router as events_router
 from app.routers.alerts import router as alerts_router
 from app.routers.media import router as media_router
+from app.routers.auth import router as auth_router
 from app.websocket.manager import manager
 from app.routers import watchlist
 from app.routers import dashboard
@@ -45,6 +46,22 @@ def migrate_database() -> None:
         # Older app versions created tables directly without recording Alembic state.
         command.stamp(config, "6a81579fda10")
     command.upgrade(config, "head")
+
+    # Ensure dynamic columns exist on SQLite or older schemas
+    with engine.begin() as conn:
+        insp = inspect(conn)
+        if "users" in insp.get_table_names():
+            user_cols = {c["name"] for c in insp.get_columns("users")}
+            if "full_name" not in user_cols:
+                conn.execute(text("ALTER TABLE users ADD COLUMN full_name VARCHAR(150)"))
+            if "badge_number" not in user_cols:
+                conn.execute(text("ALTER TABLE users ADD COLUMN badge_number VARCHAR(50)"))
+            if "role" not in user_cols:
+                conn.execute(text("ALTER TABLE users ADD COLUMN role VARCHAR(50) DEFAULT 'OPERATOR'"))
+            if "is_verified" not in user_cols:
+                conn.execute(text("ALTER TABLE users ADD COLUMN is_verified BOOLEAN DEFAULT 1"))
+            if "session_token" not in user_cols:
+                conn.execute(text("ALTER TABLE users ADD COLUMN session_token VARCHAR(255)"))
 
 
 @asynccontextmanager
@@ -74,6 +91,7 @@ app.include_router(alerts_router)
 app.include_router(watchlist.router)
 app.include_router(dashboard.router)
 app.include_router(media_router)
+app.include_router(auth_router)
 
 
 @app.get("/health")

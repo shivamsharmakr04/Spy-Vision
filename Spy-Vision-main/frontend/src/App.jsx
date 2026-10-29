@@ -1,13 +1,13 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import Navbar from './components/Navbar';
 import DashboardView from './components/DashboardView';
 import ZoneEditor from './components/ZoneEditor';
 import WatchlistManager from './components/WatchlistManager';
 import EventsHistory from './components/EventsHistory';
 import CameraManager from './components/CameraManager';
-import SimulationController from './components/SimulationController';
+import AuthPage from './components/AuthPage';
 
-import { api, AlertWebSocketManager } from './api/client';
+import { api, authStorage, AlertWebSocketManager } from './api/client';
 import { 
   DEFAULT_CAMERAS, 
   DEFAULT_ZONES, 
@@ -18,10 +18,13 @@ import {
 } from './data/mockData';
 
 export default function App() {
+  const [currentUser, setCurrentUser] = useState(() => authStorage.getUser());
+  const [authChecking, setAuthChecking] = useState(true);
+
   const [activeView, setActiveView] = useState('dashboard');
   const [wsStatus, setWsStatus] = useState('DISCONNECTED');
   const [audioEnabled, setAudioEnabled] = useState(true);
-  const [theme, setTheme] = useState('light'); // Default light theme as requested
+  const [theme, setTheme] = useState('light');
 
   useEffect(() => {
     if (theme === 'dark') {
@@ -45,8 +48,37 @@ export default function App() {
   const [backendOnline, setBackendOnline] = useState(false);
   const [actionError, setActionError] = useState('');
 
+  // Validate active operator session on mount
+  useEffect(() => {
+    const verifySession = async () => {
+      const token = authStorage.getToken();
+      if (!token) {
+        setCurrentUser(null);
+        setAuthChecking(false);
+        return;
+      }
+      try {
+        const user = await api.getMe();
+        if (user && user.is_verified) {
+          setCurrentUser(user);
+          authStorage.setUser(user);
+        } else {
+          throw new Error('Unverified operator account');
+        }
+      } catch (err) {
+        console.warn('Operator session invalid:', err.message);
+        authStorage.clearToken();
+        authStorage.clearUser();
+        setCurrentUser(null);
+      } finally {
+        setAuthChecking(false);
+      }
+    };
+    verifySession();
+  }, []);
+
   // Load initial data from REST API with default fallbacks
-  const loadData = async () => {
+  const loadData = useCallback(async () => {
     try {
       const statsRes = await api.getStats().catch(() => null);
       setBackendOnline(Boolean(statsRes));
@@ -68,12 +100,14 @@ export default function App() {
       if (Array.isArray(eventsRes?.items)) setEvents(eventsRes.items);
       if (Array.isArray(personsRes)) setPersons(personsRes);
       if (Array.isArray(vehiclesRes)) setVehicles(vehiclesRes);
-    } catch (err) {
+    } catch {
       console.log('[Data Sync Note] Using default production dataset.');
     }
-  };
+  }, []);
 
   useEffect(() => {
+    if (!currentUser) return;
+
     loadData();
 
     // Live Real-Time Polling Interval (Syncs backend SQLite data every 3 seconds)
@@ -101,7 +135,7 @@ export default function App() {
       clearInterval(pollInterval);
       wsManager.disconnect();
     };
-  }, [audioEnabled]);
+  }, [currentUser, audioEnabled, loadData]);
 
   // Alert Sound Playback
   const playAlertSound = () => {
@@ -118,9 +152,25 @@ export default function App() {
       gain.connect(ctx.destination);
       osc.start();
       osc.stop(ctx.currentTime + 0.4);
-    } catch (e) {
+    } catch {
       // Audio fallback
     }
+  };
+
+  const handleAuthSuccess = (user) => {
+    setCurrentUser(user);
+    setActiveView('dashboard');
+    loadData();
+  };
+
+  const handleLogout = async () => {
+    try {
+      await api.logout();
+    } catch {
+      // ignore
+    }
+    setCurrentUser(null);
+    setActiveView('dashboard');
   };
 
   // Actions
@@ -239,18 +289,24 @@ export default function App() {
     }
   };
 
-  const handleTriggerSimulatedEvent = async (eventData) => {
-    setActionError('');
-    try {
-      await api.triggerSimulatedEvent(eventData);
-      await loadData();
-      if (audioEnabled) playAlertSound();
-      return true;
-    } catch (err) {
-      setActionError(err.message);
-      return false;
-    }
-  };
+  // Loading state during auth check
+  if (authChecking) {
+    return (
+      <div className="min-h-screen bg-slate-950 flex flex-col items-center justify-center text-white space-y-4 font-mono">
+        <div className="w-10 h-10 border-4 border-blue-500 border-t-transparent rounded-full animate-spin" />
+        <div className="text-sm font-bold tracking-widest uppercase text-slate-300">
+          Verifying Operator Security Clearance...
+        </div>
+      </div>
+    );
+  }
+
+  // If not authenticated, require real verified operator login or account creation
+  if (!currentUser) {
+    return <AuthPage onAuthSuccess={handleAuthSuccess} theme={theme} />;
+  }
+
+  const activeAlertCount = alerts.filter(a => a.status === 'ACTIVE').length;
 
   return (
     <div className={`min-h-screen transition-colors duration-300 flex flex-col font-sans ${
@@ -261,23 +317,26 @@ export default function App() {
         activeView={activeView}
         setActiveView={setActiveView}
         wsStatus={wsStatus}
-        activeAlertCount={alerts.filter(a => a.status === 'ACTIVE').length}
+        activeAlertCount={activeAlertCount}
         audioEnabled={audioEnabled}
         setAudioEnabled={setAudioEnabled}
         theme={theme}
         setTheme={setTheme}
+        currentUser={currentUser}
+        onLogout={handleLogout}
       />
 
       {/* Main Content Router */}
       <main className="flex-1">
         {!backendOnline && (
-          <div role="status" className="mx-4 mt-4 rounded-lg border border-amber-300 bg-amber-50 px-4 py-2 text-sm text-amber-900">
-            Backend unavailable. Start the API to save changes and receive live alerts.
+          <div role="status" className="mx-4 mt-4 rounded-xl border border-amber-300 bg-amber-50 px-4 py-2.5 text-xs font-semibold text-amber-900 shadow-xs flex items-center justify-between">
+            <span>Operational Notice: Backend service connecting... Local mock cache active.</span>
+            <span className="font-mono text-[10px] bg-amber-200/60 px-2 py-0.5 rounded">AUTO-RETRYING</span>
           </div>
         )}
         {actionError && (
-          <div role="alert" className="mx-4 mt-3 rounded-lg border border-rose-300 bg-rose-50 px-4 py-2 text-sm text-rose-900">
-            Request failed: {actionError}
+          <div role="alert" className="mx-4 mt-3 rounded-xl border border-rose-300 bg-rose-50 px-4 py-2.5 text-xs font-semibold text-rose-900 shadow-xs">
+            Operation Error: {actionError}
           </div>
         )}
         {activeView === 'dashboard' && (
@@ -290,8 +349,6 @@ export default function App() {
             onAcknowledgeAlert={handleAcknowledgeAlert}
             onResolveAlert={handleResolveAlert}
             onSelectCameraForZone={handleSelectCameraForZone}
-            onOpenSimulation={() => setActiveView('simulation')}
-            onTriggerWebcamAlert={handleTriggerSimulatedEvent}
           />
         )}
 
@@ -332,18 +389,14 @@ export default function App() {
             onHeartbeat={handleHeartbeat}
           />
         )}
-
-        {activeView === 'simulation' && (
-          <SimulationController
-            cameras={cameras}
-            onTriggerEvent={handleTriggerSimulatedEvent}
-          />
-        )}
       </main>
 
-      {/* Footer */}
-      <footer className="border-t border-slate-200 dark:border-slate-800 bg-white/80 dark:bg-slate-950/80 py-3 px-4 text-center text-slate-500 dark:text-slate-400 text-xs font-mono backdrop-blur-md">
-        IBVAP v1.0.0 — Intelligent Border Video Analytics Platform | Ministry of Home Affairs | Enterprise Border Command
+      {/* High-security Command Footer */}
+      <footer className="border-t border-slate-200 dark:border-slate-800 bg-white/80 dark:bg-slate-950/80 py-3 px-4 text-center text-slate-500 dark:text-slate-400 text-xs font-mono backdrop-blur-md flex flex-wrap items-center justify-between gap-2">
+        <span>IBVAP v1.0.0 — Intelligent Border Video Analytics Platform | Ministry of Home Affairs</span>
+        <span className="text-[11px] text-emerald-600 dark:text-emerald-400 font-bold">
+          SECURE PROTOCOL ACTIVE • OPERATOR: {currentUser.username.toUpperCase()}
+        </span>
       </footer>
     </div>
   );
