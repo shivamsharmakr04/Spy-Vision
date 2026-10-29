@@ -1,5 +1,41 @@
 @import "tailwindcss";
 
+@theme {
+  --color-oatmeal-50: #faf8f5;
+  --color-oatmeal-100: #f5f1e8;
+  --color-oatmeal-200: #ebe3d3;
+  --color-oatmeal-300: #ded1bb;
+  --color-oatmeal-400: #c9b79b;
+  --color-oatmeal-500: #b09c7d;
+  --color-oatmeal-800: #2c2720;
+  --color-oatmeal-900: #1e1a15;
+  --color-oatmeal-950: #12100d;
+
+  --color-pine-50: #f0f7f3;
+  --color-pine-100: #dceee3;
+  --color-pine-200: #b9dec9;
+  --color-pine-300: #8bc6a5;
+  --color-pine-400: #59a67d;
+  --color-pine-500: #388a5e;
+  --color-pine-600: #296f4b;
+  --color-pine-700: #21593c;
+  --color-pine-800: #1b4332;
+  --color-pine-900: #153728;
+  --color-pine-950: #0a1f16;
+
+  --color-lilac-50: #f7f4fb;
+  --color-lilac-100: #eee7f6;
+  --color-lilac-200: #ded0ee;
+  --color-lilac-300: #c5b0df;
+  --color-lilac-400: #a788cb;
+  --color-lilac-500: #8d66b9;
+  --color-lilac-600: #7a50a5;
+  --color-lilac-700: #653e8b;
+  --color-lilac-800: #543472;
+  --color-lilac-900: #462c5e;
+  --color-lilac-950: #2b173c;
+}
+
 @layer base {
   :root {
     --font-sans: 'Plus Jakarta Sans', 'Inter', system-ui, -apple-system, sans-serif;
@@ -11,8 +47,8 @@
   }
 
   body {
-    background-color: #f1f5f9;
-    color: #0f172a;
+    background-color: #f5f1e8;
+    color: #1c1813;
     font-family: var(--font-sans);
     min-height: 100vh;
     transition: background-color 0.25s ease, color 0.25s ease;
@@ -20,46 +56,46 @@
 
   body.dark,
   html.dark body {
-    background-color: #070b14;
-    color: #f8fafc;
+    background-color: #0c1511;
+    color: #f7f4fb;
   }
 }
 
-/* Tactical Elevated Card (Dual-theme responsive) */
+/* Oatmeal & Pine Elevated Card */
 .light-card,
 .tactical-card {
-  background: rgba(255, 255, 255, 0.96);
-  border: 1px solid rgba(226, 232, 240, 0.9);
+  background: rgba(253, 251, 247, 0.96);
+  border: 1px solid rgba(222, 209, 187, 0.7);
   border-radius: 1.25rem;
-  box-shadow: 0 4px 20px -2px rgba(15, 23, 42, 0.05), 0 2px 6px -1px rgba(15, 23, 42, 0.02);
+  box-shadow: 0 4px 20px -2px rgba(27, 67, 50, 0.05), 0 2px 6px -1px rgba(27, 67, 50, 0.02);
   transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.2s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.2s ease;
 }
 
 .dark .light-card,
 .dark .tactical-card {
-  background: rgba(15, 23, 42, 0.75);
+  background: rgba(14, 28, 22, 0.8);
   backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
-  border: 1px solid rgba(51, 65, 85, 0.6);
-  box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(41, 111, 75, 0.35);
+  box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(197, 176, 223, 0.1);
 }
 
 .light-card:hover,
 .tactical-card:hover {
-  border-color: rgba(59, 130, 246, 0.4);
+  border-color: rgba(141, 102, 185, 0.5);
 }
 
 .glass-panel {
-  background: rgba(255, 255, 255, 0.9);
+  background: rgba(253, 251, 247, 0.9);
   backdrop-filter: blur(12px);
-  border: 1px solid rgba(226, 232, 240, 0.8);
+  border: 1px solid rgba(222, 209, 187, 0.6);
   border-radius: 1.25rem;
 }
 
 .dark .glass-panel {
-  background: rgba(15, 23, 42, 0.7);
+  background: rgba(14, 28, 22, 0.75);
   backdrop-filter: blur(16px);
-  border: 1px solid rgba(51, 65, 85, 0.6);
+  border: 1px solid rgba(41, 111, 75, 0.4);
 }
 
 .glass-alert {
@@ -73,7 +109,7 @@
   border: 1px solid rgba(225, 29, 72, 0.4);
 }
 
-/* Custom Interactive Scrollbars */
+/* Custom Scrollbars in Oatmeal & Soft Lilac */
 ::-webkit-scrollbar {
   width: 7px;
   height: 7px;
@@ -84,47 +120,34 @@
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #cbd5e1;
+  background: #ded1bb;
   border-radius: 9999px;
 }
 
 .dark ::-webkit-scrollbar-thumb {
-  background: #334155;
+  background: #21593c;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #94a3b8;
+  background: #a788cb;
 }
 
 .dark ::-webkit-scrollbar-thumb:hover {
-  background: #475569;
+  background: #388a5e;
 }
 
 /* Pulse Glow Keyframes */
 @keyframes pulse-glow {
   0%, 100% {
     opacity: 1;
-    box-shadow: 0 0 12px rgba(239, 68, 68, 0.5);
+    box-shadow: 0 0 12px rgba(27, 67, 50, 0.5);
   }
   50% {
     opacity: 0.6;
-    box-shadow: 0 0 24px rgba(239, 68, 68, 0.8);
+    box-shadow: 0 0 24px rgba(141, 102, 185, 0.8);
   }
 }
 
 .animate-alert-pulse {
   animation: pulse-glow 1.5s infinite ease-in-out;
-}
-
-/* Interactive Utility Helpers */
-.interactive-btn {
-  transition: all 0.15s cubic-bezier(0.16, 1, 0.3, 1);
-}
-
-.interactive-btn:hover {
-  transform: translateY(-1px);
-}
-
-.interactive-btn:active {
-  transform: translateY(0) scale(0.98);
 }

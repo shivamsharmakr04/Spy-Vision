@@ -115,55 +115,55 @@ export default function DashboardView({
       {/* Real-time Status Header */}
       <div className="light-card p-3.5 px-5 flex flex-wrap items-center justify-between text-xs font-semibold gap-3">
         <div className="flex items-center gap-3">
-          <span className="flex items-center gap-2 text-emerald-700 dark:text-emerald-400 font-bold bg-emerald-50 dark:bg-emerald-950/60 px-3 py-1 rounded-full border border-emerald-200 dark:border-emerald-800">
-            <span className="w-2 h-2 rounded-full bg-emerald-500 animate-ping" />
-            {backendOnline ? 'API TELEMETRY CONNECTED' : 'SYSTEM OFFLINE • DEMO CACHE'}
+          <span className="flex items-center gap-2 text-pine-900 dark:text-pine-200 font-bold bg-pine-100 dark:bg-pine-950/80 px-3.5 py-1.5 rounded-full border border-pine-300 dark:border-pine-800">
+            <span className="w-2.5 h-2.5 rounded-full bg-pine-600 dark:bg-pine-400 animate-ping" />
+            {backendOnline ? 'TELEMETRY LIVE • ONLINE' : 'LOCAL CACHED DEMO • ACTIVE'}
           </span>
-          <span className="text-slate-300 dark:text-slate-700 hidden sm:inline">|</span>
-          <span className="text-slate-600 dark:text-slate-300 font-mono flex items-center gap-1.5">
-            <Radio className="w-3.5 h-3.5 text-blue-500" />
-            WebSocket: <strong className="text-slate-900 dark:text-white font-bold">{wsStatus || 'DISCONNECTED'}</strong>
+          <span className="text-oatmeal-400 dark:text-pine-800 hidden sm:inline">|</span>
+          <span className="text-oatmeal-800 dark:text-oatmeal-200 font-mono flex items-center gap-1.5">
+            <Radio className="w-3.5 h-3.5 text-lilac-600 dark:text-lilac-400" />
+            WebSocket: <strong className="text-pine-950 dark:text-oatmeal-50 font-bold">{wsStatus || 'DISCONNECTED'}</strong>
           </span>
         </div>
 
         <div className="flex items-center gap-3 font-mono">
-          <span className="text-slate-500 dark:text-slate-400 text-[11px]">SURVEILLANCE CLOCK:</span>
-          <span className="bg-slate-900 dark:bg-slate-950 text-emerald-400 px-3 py-1 rounded-xl text-xs font-bold border border-slate-800 shadow-xs">
+          <span className="text-oatmeal-600 dark:text-oatmeal-400 text-[11px]">DEFENSE CLOCK:</span>
+          <span className="bg-pine-950 text-lilac-200 px-3 py-1 rounded-xl text-xs font-bold border border-pine-800 shadow-xs">
             {currentTime.toLocaleDateString('en-US', { day: '2-digit', month: 'short', year: 'numeric' })} — {currentTime.toLocaleTimeString()}
           </span>
         </div>
       </div>
 
       {/* ========================================================================= */}
-      {/* TOP SUMMARY METRICS (4 Real-Time Interactive Cards) */}
+      {/* TOP SUMMARY METRICS (4 Real-Time Oatmeal, Pine & Lilac Cards) */}
       {/* ========================================================================= */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         
         {/* Card 1: Registered Cameras */}
-        <div className="light-card p-5 flex items-center justify-between group hover:border-blue-400/80 transition-all">
+        <div className="light-card p-5 flex items-center justify-between group hover:border-pine-500 transition-all">
           <div>
-            <p className="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Active Cameras</p>
-            <h3 className="text-2xl sm:text-3xl font-extrabold text-slate-900 dark:text-white mt-1 tracking-tight">
-              {onlineCamCount} <span className="text-base text-slate-400 dark:text-slate-500 font-normal">/ {totalCamCount}</span>
+            <p className="text-xs font-bold text-pine-800 dark:text-pine-300 uppercase tracking-wider">Active Cameras</p>
+            <h3 className="text-2xl sm:text-3xl font-extrabold text-pine-950 dark:text-white mt-1 tracking-tight">
+              {onlineCamCount} <span className="text-base text-oatmeal-500 dark:text-oatmeal-400 font-normal">/ {totalCamCount}</span>
             </h3>
-            <p className="text-[11px] text-emerald-600 dark:text-emerald-400 font-semibold mt-1 flex items-center gap-1">
-              <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
-              Surveillance feeds operational
+            <p className="text-[11px] text-pine-700 dark:text-pine-300 font-semibold mt-1 flex items-center gap-1.5">
+              <span className="w-1.5 h-1.5 rounded-full bg-pine-600 dark:bg-pine-400" />
+              Surveillance grid active
             </p>
           </div>
-          <div className="w-12 h-12 rounded-2xl bg-blue-50 dark:bg-blue-950/60 text-blue-600 dark:text-blue-400 flex items-center justify-center group-hover:scale-110 transition-transform shadow-xs">
+          <div className="w-12 h-12 rounded-2xl bg-pine-100 dark:bg-pine-950/80 text-pine-800 dark:text-pine-200 flex items-center justify-center group-hover:scale-110 transition-transform shadow-xs border border-pine-200 dark:border-pine-800">
             <Video className="w-6 h-6" />
           </div>
         </div>
 
         {/* Card 2: Intrusions */}
-        <div className="light-card p-5 flex items-center justify-between border-rose-200 dark:border-rose-900/60 bg-gradient-to-br from-white via-rose-50/20 to-rose-50/40 dark:from-slate-900 dark:to-rose-950/20 group hover:border-rose-400/80 transition-all">
+        <div className="light-card p-5 flex items-center justify-between border-rose-200 dark:border-rose-900/60 bg-gradient-to-br from-oatmeal-50 via-rose-50/20 to-rose-50/40 dark:from-[#0e1c16] dark:to-rose-950/20 group hover:border-rose-400 transition-all">
           <div>
-            <p className="text-xs font-bold text-rose-700 dark:text-rose-400 uppercase tracking-wider">Intrusions Logged</p>
+            <p className="text-xs font-bold text-rose-800 dark:text-rose-400 uppercase tracking-wider">Intrusion Breaches</p>
             <h3 className="text-2xl sm:text-3xl font-extrabold text-rose-600 dark:text-rose-400 mt-1 tracking-tight">
               {breachCount} <span className="text-base font-normal">Events</span>
             </h3>
-            <p className="text-[11px] text-rose-600 dark:text-rose-400 font-semibold mt-1">Perimeter tripwire triggers</p>
+            <p className="text-[11px] text-rose-700 dark:text-rose-400 font-semibold mt-1">Perimeter tripwire alerts</p>
           </div>
           <div className="w-12 h-12 rounded-2xl bg-rose-600 text-white flex items-center justify-center shadow-md shadow-rose-600/30 group-hover:scale-110 transition-transform animate-pulse">
             <AlertTriangle className="w-6 h-6" />
@@ -171,29 +171,29 @@ export default function DashboardView({
         </div>
 
         {/* Card 3: Vehicles */}
-        <div className="light-card p-5 flex items-center justify-between group hover:border-amber-400/80 transition-all">
+        <div className="light-card p-5 flex items-center justify-between group hover:border-lilac-500 transition-all">
           <div>
-            <p className="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Vehicle ANPR Passes</p>
-            <h3 className="text-2xl sm:text-3xl font-extrabold text-slate-900 dark:text-white mt-1 tracking-tight">
-              {vehicleCount} <span className="text-base text-slate-400 dark:text-slate-500 font-normal">Scans</span>
+            <p className="text-xs font-bold text-lilac-800 dark:text-lilac-300 uppercase tracking-wider">ANPR Vehicle Passes</p>
+            <h3 className="text-2xl sm:text-3xl font-extrabold text-pine-950 dark:text-white mt-1 tracking-tight">
+              {vehicleCount} <span className="text-base text-oatmeal-500 dark:text-oatmeal-400 font-normal">Scans</span>
             </h3>
-            <p className="text-[11px] text-amber-600 dark:text-amber-400 font-semibold mt-1">Plate recognition engine</p>
+            <p className="text-[11px] text-lilac-700 dark:text-lilac-300 font-semibold mt-1">Automated plate recognition</p>
           </div>
-          <div className="w-12 h-12 rounded-2xl bg-amber-50 dark:bg-amber-950/60 text-amber-600 dark:text-amber-400 flex items-center justify-center group-hover:scale-110 transition-transform shadow-xs">
+          <div className="w-12 h-12 rounded-2xl bg-lilac-100 dark:bg-lilac-950/80 text-lilac-800 dark:text-lilac-200 flex items-center justify-center group-hover:scale-110 transition-transform shadow-xs border border-lilac-200 dark:border-lilac-800">
             <Car className="w-6 h-6" />
           </div>
         </div>
 
         {/* Card 4: Active Alerts */}
-        <div className="light-card p-5 flex items-center justify-between group hover:border-blue-400/80 transition-all">
+        <div className="light-card p-5 flex items-center justify-between group hover:border-pine-500 transition-all">
           <div>
-            <p className="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Unresolved Alerts</p>
-            <h3 className="text-2xl sm:text-3xl font-extrabold text-slate-900 dark:text-white mt-1 tracking-tight">
-              {activeAlertCount} <span className="text-base text-slate-400 dark:text-slate-500 font-normal">Active</span>
+            <p className="text-xs font-bold text-pine-800 dark:text-pine-300 uppercase tracking-wider">Pending Alerts</p>
+            <h3 className="text-2xl sm:text-3xl font-extrabold text-pine-950 dark:text-white mt-1 tracking-tight">
+              {activeAlertCount} <span className="text-base text-oatmeal-500 dark:text-oatmeal-400 font-normal">Active</span>
             </h3>
-            <p className="text-[11px] text-blue-600 dark:text-blue-400 font-semibold mt-1">Real-time alert dispatch</p>
+            <p className="text-[11px] text-pine-700 dark:text-pine-300 font-semibold mt-1">Live incident queue</p>
           </div>
-          <div className="w-12 h-12 rounded-2xl bg-blue-50 dark:bg-blue-950/60 text-blue-600 dark:text-blue-400 flex items-center justify-center group-hover:scale-110 transition-transform shadow-xs">
+          <div className="w-12 h-12 rounded-2xl bg-pine-100 dark:bg-pine-950/80 text-pine-800 dark:text-pine-200 flex items-center justify-center group-hover:scale-110 transition-transform shadow-xs border border-pine-200 dark:border-pine-800">
             <BellRing className="w-6 h-6" />
           </div>
         </div>
@@ -208,20 +208,20 @@ export default function DashboardView({
         <div className="lg:col-span-8 space-y-4">
           
           <div className="light-card overflow-hidden p-2.5 space-y-2.5">
-            <div className="relative aspect-video min-h-[500px] bg-slate-950 rounded-2xl border border-slate-800 overflow-hidden text-xs flex flex-col justify-between shadow-2xl">
+            <div className="relative aspect-video min-h-[500px] bg-[#08120d] rounded-2xl border border-pine-800/80 overflow-hidden text-xs flex flex-col justify-between shadow-2xl">
               <canvas ref={hiddenCanvasRef} className="hidden" />
 
               {/* Top Control Overlay Bar */}
-              <div className="absolute top-0 left-0 right-0 z-20 bg-slate-950/90 backdrop-blur-md text-white px-4 py-3 flex flex-wrap items-center justify-between gap-2.5 border-b border-slate-800">
+              <div className="absolute top-0 left-0 right-0 z-20 bg-[#08120d]/90 backdrop-blur-md text-white px-4 py-3 flex flex-wrap items-center justify-between gap-2.5 border-b border-pine-800/80">
                 <div className="flex items-center gap-2.5">
-                  <span className={`w-3 h-3 rounded-full ${isWebcamActive ? 'bg-emerald-400 animate-ping' : 'bg-blue-500'}`} />
-                  <span className="font-extrabold text-sm sm:text-base tracking-tight text-white">
+                  <span className={`w-3 h-3 rounded-full ${isWebcamActive ? 'bg-pine-400 animate-ping' : 'bg-lilac-400'}`} />
+                  <span className="font-extrabold text-sm sm:text-base tracking-tight text-oatmeal-50">
                     {isWebcamActive ? 'Live Laptop Webcam Stream' : 'BOP Sector 4 - Main Fence Terminal'}
                   </span>
-                  <span className="text-[10px] px-2.5 py-0.5 rounded-full bg-slate-800 text-slate-300 font-mono font-bold">
+                  <span className="text-[10px] px-2.5 py-0.5 rounded-full bg-pine-900/80 text-pine-200 font-mono font-bold border border-pine-700">
                     {isWebcamActive ? 'STREAMING LIVE' : 'FEED STANDBY'}
                   </span>
-                  <span className="text-[11px] px-2.5 py-0.5 rounded-lg bg-emerald-950/80 text-emerald-400 border border-emerald-800 font-mono font-bold">
+                  <span className="text-[11px] px-2.5 py-0.5 rounded-lg bg-lilac-950/80 text-lilac-300 border border-lilac-800 font-mono font-bold">
                     {currentTime.toLocaleTimeString()}
                   </span>
                 </div>
@@ -232,7 +232,7 @@ export default function DashboardView({
                     className={`px-4 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer shadow-md flex items-center gap-2 ${
                       isWebcamActive 
                         ? 'bg-rose-600 hover:bg-rose-500 text-white' 
-                        : 'bg-blue-600 hover:bg-blue-500 text-white'
+                        : 'bg-pine-700 hover:bg-pine-600 text-white ring-2 ring-lilac-400/40'
                     }`}
                   >
                     <Camera className="w-4 h-4" />
@@ -243,7 +243,7 @@ export default function DashboardView({
                     <button
                       onClick={handleCaptureWebcamSnapshot}
                       disabled={!cameras.length}
-                      className="px-4 py-2 bg-emerald-600 hover:bg-emerald-500 text-white rounded-xl text-xs font-bold cursor-pointer shadow-md disabled:cursor-not-allowed disabled:opacity-50 flex items-center gap-1.5"
+                      className="px-4 py-2 bg-lilac-600 hover:bg-lilac-500 text-white rounded-xl text-xs font-bold cursor-pointer shadow-md disabled:cursor-not-allowed disabled:opacity-50 flex items-center gap-1.5"
                     >
                       <ShieldAlert className="w-4 h-4" />
                       Snap & Save Alert
@@ -261,51 +261,51 @@ export default function DashboardView({
                 className={`w-full h-full object-cover ${isWebcamActive ? 'block' : 'hidden'}`}
               />
 
-              {/* Pristine Non-overlapping Tactical Standby Terminal Display */}
+              {/* Tactical Standby Terminal in Deep Pine & Lilac */}
               {!isWebcamActive && (
-                <div className="w-full h-full min-h-[500px] bg-gradient-to-b from-slate-950 via-[#0a1120] to-slate-950 flex flex-col items-center justify-center relative overflow-hidden">
+                <div className="w-full h-full min-h-[500px] bg-gradient-to-b from-[#08120d] via-[#0e1f17] to-[#08120d] flex flex-col items-center justify-center relative overflow-hidden">
                   {/* Subtle Grid Matrix */}
-                  <div className="absolute inset-0 bg-[radial-gradient(#1e3a8a_1px,transparent_1px)] [background-size:24px_24px] opacity-25" />
+                  <div className="absolute inset-0 bg-[radial-gradient(#296f4b_1px,transparent_1px)] [background-size:24px_24px] opacity-25" />
                   
-                  {/* Tactical Reticles in Corners */}
-                  <div className="absolute top-16 left-6 w-7 h-7 border-t-2 border-l-2 border-blue-500/40" />
-                  <div className="absolute top-16 right-6 w-7 h-7 border-t-2 border-r-2 border-blue-500/40" />
-                  <div className="absolute bottom-6 left-6 w-7 h-7 border-b-2 border-l-2 border-blue-500/40" />
-                  <div className="absolute bottom-6 right-6 w-7 h-7 border-b-2 border-r-2 border-blue-500/40" />
+                  {/* Tactical Reticles in Soft Lilac */}
+                  <div className="absolute top-16 left-6 w-7 h-7 border-t-2 border-l-2 border-lilac-400/50" />
+                  <div className="absolute top-16 right-6 w-7 h-7 border-t-2 border-r-2 border-lilac-400/50" />
+                  <div className="absolute bottom-6 left-6 w-7 h-7 border-b-2 border-l-2 border-lilac-400/50" />
+                  <div className="absolute bottom-6 right-6 w-7 h-7 border-b-2 border-r-2 border-lilac-400/50" />
 
                   <div className="z-10 text-center space-y-4 p-8 max-w-lg">
-                    <div className="w-20 h-20 rounded-3xl bg-blue-500/10 border border-blue-500/30 flex items-center justify-center mx-auto text-blue-400 shadow-xl shadow-blue-500/10">
+                    <div className="w-20 h-20 rounded-3xl bg-pine-800/40 border border-pine-500/30 flex items-center justify-center mx-auto text-lilac-300 shadow-xl shadow-pine-900/30">
                       <Video className="w-10 h-10" />
                     </div>
                     
                     <div className="space-y-1.5">
-                      <h3 className="text-white font-extrabold text-xl tracking-tight">
+                      <h3 className="text-oatmeal-50 font-extrabold text-xl tracking-tight">
                         Main Perimeter Terminal Active
                       </h3>
-                      <p className="text-slate-400 text-xs sm:text-sm leading-relaxed max-w-md mx-auto">
-                        Primary sensor stream ready. Click <span className="text-blue-400 font-bold">Turn On Laptop Webcam</span> above to stream live surveillance video directly from your webcam.
+                      <p className="text-oatmeal-300 text-xs sm:text-sm leading-relaxed max-w-md mx-auto">
+                        Primary sensor stream ready. Click <span className="text-lilac-300 font-bold">Turn On Laptop Webcam</span> above to stream live surveillance video directly from your camera.
                       </p>
                     </div>
 
-                    {/* Technical Specs Pill Bar */}
-                    <div className="flex flex-wrap items-center justify-center gap-2 pt-2 text-[11px] font-mono text-slate-300">
-                      <span className="px-3 py-1 rounded-xl bg-slate-900/90 border border-slate-800">RESOLUTION: 1080p FHD</span>
-                      <span className="px-3 py-1 rounded-xl bg-slate-900/90 border border-slate-800">FPS: 30</span>
-                      <span className="px-3 py-1 rounded-xl bg-slate-900/90 border border-slate-800 text-emerald-400">ENCRYPTION: AES-256</span>
+                    {/* Technical Specs Pill Bar in Oatmeal & Lilac */}
+                    <div className="flex flex-wrap items-center justify-center gap-2 pt-2 text-[11px] font-mono text-oatmeal-200">
+                      <span className="px-3 py-1 rounded-xl bg-pine-950 border border-pine-800">RESOLUTION: 1080p FHD</span>
+                      <span className="px-3 py-1 rounded-xl bg-pine-950 border border-pine-800">FPS: 30</span>
+                      <span className="px-3 py-1 rounded-xl bg-pine-950 border border-pine-800 text-lilac-300">ENCRYPTION: AES-256</span>
                     </div>
                   </div>
                 </div>
               )}
 
-              {/* Clean Reticle Tracking (Only active during live webcam stream) */}
+              {/* Clean Reticle Tracking */}
               {isWebcamActive && showBoundingBoxes && (
                 <div className="absolute inset-0 pointer-events-none flex items-center justify-center z-10">
-                  <div className="w-64 h-64 border-2 border-dashed border-emerald-400 rounded-2xl flex flex-col justify-between p-3 relative shadow-2xl">
-                    <div className="bg-emerald-600 text-white font-bold px-2.5 py-0.5 rounded-md text-[11px] w-max shadow-xs">
+                  <div className="w-64 h-64 border-2 border-dashed border-lilac-400 rounded-2xl flex flex-col justify-between p-3 relative shadow-2xl">
+                    <div className="bg-pine-800 text-oatmeal-50 font-bold px-2.5 py-0.5 rounded-md text-[11px] w-max shadow-xs border border-pine-600">
                       Target Tracking • Verified Live Stream
                     </div>
                     <div className="text-right">
-                      <span className="bg-slate-950/80 text-emerald-400 px-2 py-0.5 rounded text-[10px] font-mono border border-emerald-500/40">
+                      <span className="bg-[#08120d]/90 text-lilac-300 px-2 py-0.5 rounded text-[10px] font-mono border border-lilac-500/40">
                         LATENCY: 18ms
                       </span>
                     </div>
@@ -321,15 +321,15 @@ export default function DashboardView({
             </div>
 
             {/* Feed Control Sub-Bar */}
-            <div className="p-3 bg-slate-50 dark:bg-slate-950/70 rounded-xl border border-slate-200 dark:border-slate-800/80 flex flex-wrap items-center justify-between text-xs font-medium gap-3">
+            <div className="p-3 bg-oatmeal-50 dark:bg-[#07110c] rounded-xl border border-oatmeal-300/80 dark:border-pine-800/80 flex flex-wrap items-center justify-between text-xs font-medium gap-3">
               <div className="flex items-center gap-2">
-                <span className="font-bold text-slate-700 dark:text-slate-300">Surveillance HUD:</span>
+                <span className="font-bold text-pine-950 dark:text-oatmeal-100">Surveillance HUD:</span>
                 <button 
                   onClick={() => setShowBoundingBoxes(!showBoundingBoxes)}
                   className={`px-3.5 py-1.5 rounded-xl border text-xs cursor-pointer transition-all ${
                     showBoundingBoxes 
-                      ? 'bg-blue-50 dark:bg-blue-950/60 text-blue-700 dark:text-blue-300 border-blue-300 dark:border-blue-800 font-bold' 
-                      : 'bg-white dark:bg-slate-900 text-slate-600 dark:text-slate-400 border-slate-200 dark:border-slate-800'
+                      ? 'bg-lilac-100 dark:bg-lilac-950/60 text-lilac-800 dark:text-lilac-200 border-lilac-300 dark:border-lilac-800 font-bold' 
+                      : 'bg-white dark:bg-pine-950 text-oatmeal-700 dark:text-oatmeal-300 border-oatmeal-300 dark:border-pine-800'
                   }`}
                 >
                   {showBoundingBoxes ? 'Target Reticle: ON' : 'Target Reticle: OFF'}
@@ -340,9 +340,9 @@ export default function DashboardView({
                 <button 
                   onClick={handleRefreshFeed}
                   disabled={streamRefreshing}
-                  className="px-3.5 py-1.5 bg-white dark:bg-slate-900 hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700 font-bold rounded-xl cursor-pointer shadow-2xs transition-all flex items-center gap-1.5"
+                  className="px-3.5 py-1.5 bg-white dark:bg-pine-950 hover:bg-oatmeal-100 dark:hover:bg-pine-900 text-pine-900 dark:text-oatmeal-200 border border-oatmeal-300 dark:border-pine-800 font-bold rounded-xl cursor-pointer shadow-2xs transition-all flex items-center gap-1.5"
                 >
-                  <RefreshCw className={`w-3.5 h-3.5 ${streamRefreshing ? 'animate-spin text-blue-600' : ''}`} />
+                  <RefreshCw className={`w-3.5 h-3.5 ${streamRefreshing ? 'animate-spin text-pine-600' : 'text-pine-700 dark:text-lilac-400'}`} />
                   Refresh Telemetry
                 </button>
               </div>
@@ -354,48 +354,48 @@ export default function DashboardView({
             
             <div 
               onClick={() => onSelectCameraForZone && onSelectCameraForZone(cameras[1]?.id || 2)}
-              className="light-card p-3 rounded-2xl border space-y-2 cursor-pointer hover:border-blue-400 transition-all"
+              className="light-card p-3 rounded-2xl border space-y-2 cursor-pointer hover:border-pine-500 transition-all"
             >
               <div className="flex items-center justify-between text-xs font-bold">
-                <span className="text-slate-800 dark:text-slate-200 flex items-center gap-1.5 truncate">
-                  <span className="w-2 h-2 rounded-full bg-emerald-500 shrink-0" />
+                <span className="text-pine-950 dark:text-oatmeal-100 flex items-center gap-1.5 truncate">
+                  <span className="w-2 h-2 rounded-full bg-pine-600 shrink-0" />
                   Cam 02: West Fence
                 </span>
-                <span className="text-emerald-600 dark:text-emerald-400 text-[10px] font-mono">ONLINE</span>
+                <span className="text-pine-700 dark:text-pine-300 text-[10px] font-mono">ONLINE</span>
               </div>
-              <div className="h-20 bg-slate-950 rounded-xl flex items-center justify-center text-slate-400 text-xs font-mono border border-slate-800/80">
+              <div className="h-20 bg-[#08120d] rounded-xl flex items-center justify-center text-oatmeal-400 text-xs font-mono border border-pine-900">
                 [ Sensor Feed Standby ]
               </div>
             </div>
 
             <div 
               onClick={() => onSelectCameraForZone && onSelectCameraForZone(cameras[2]?.id || 3)}
-              className="light-card p-3 rounded-2xl border space-y-2 cursor-pointer hover:border-blue-400 transition-all"
+              className="light-card p-3 rounded-2xl border space-y-2 cursor-pointer hover:border-lilac-500 transition-all"
             >
               <div className="flex items-center justify-between text-xs font-bold">
-                <span className="text-slate-800 dark:text-slate-200 flex items-center gap-1.5 truncate">
-                  <span className="w-2 h-2 rounded-full bg-emerald-500 shrink-0" />
+                <span className="text-pine-950 dark:text-oatmeal-100 flex items-center gap-1.5 truncate">
+                  <span className="w-2 h-2 rounded-full bg-pine-600 shrink-0" />
                   Cam 03: ANPR Gate
                 </span>
-                <span className="text-emerald-600 dark:text-emerald-400 text-[10px] font-mono">ONLINE</span>
+                <span className="text-lilac-700 dark:text-lilac-300 text-[10px] font-mono">ONLINE</span>
               </div>
-              <div className="h-20 bg-slate-950 rounded-xl flex items-center justify-center text-slate-400 text-xs font-mono border border-slate-800/80">
+              <div className="h-20 bg-[#08120d] rounded-xl flex items-center justify-center text-oatmeal-400 text-xs font-mono border border-pine-900">
                 [ ANPR Scanner Ready ]
               </div>
             </div>
 
             <div 
               onClick={() => onSelectCameraForZone && onSelectCameraForZone(cameras[3]?.id || 4)}
-              className="light-card p-3 rounded-2xl border space-y-2 cursor-pointer hover:border-blue-400 transition-all"
+              className="light-card p-3 rounded-2xl border space-y-2 cursor-pointer hover:border-pine-500 transition-all"
             >
               <div className="flex items-center justify-between text-xs font-bold">
-                <span className="text-slate-800 dark:text-slate-200 flex items-center gap-1.5 truncate">
-                  <span className="w-2 h-2 rounded-full bg-emerald-500 shrink-0" />
+                <span className="text-pine-950 dark:text-oatmeal-100 flex items-center gap-1.5 truncate">
+                  <span className="w-2 h-2 rounded-full bg-pine-600 shrink-0" />
                   Cam 04: River Patrol
                 </span>
-                <span className="text-emerald-600 dark:text-emerald-400 text-[10px] font-mono">ONLINE</span>
+                <span className="text-pine-700 dark:text-pine-300 text-[10px] font-mono">ONLINE</span>
               </div>
-              <div className="h-20 bg-slate-950 rounded-xl flex items-center justify-center text-slate-400 text-xs font-mono border border-slate-800/80">
+              <div className="h-20 bg-[#08120d] rounded-xl flex items-center justify-center text-oatmeal-400 text-xs font-mono border border-pine-900">
                 [ Thermal IR Standby ]
               </div>
             </div>
@@ -404,13 +404,13 @@ export default function DashboardView({
 
         </div>
 
-        {/* Right Panel: Live Alerts & Sector Control (4 Cols) */}
+        {/* Right Panel: Live Alerts & Emergency Sector Control (4 Cols) */}
         <div className="lg:col-span-4 space-y-4">
           
           {/* Real-time Alerts List */}
           <div className="light-card p-5 space-y-4">
-            <div className="flex items-center justify-between pb-3 border-b border-slate-100 dark:border-slate-800">
-              <h3 className="font-bold text-sm text-slate-900 dark:text-white flex items-center gap-2">
+            <div className="flex items-center justify-between pb-3 border-b border-oatmeal-200 dark:border-pine-800">
+              <h3 className="font-bold text-sm text-pine-950 dark:text-oatmeal-50 flex items-center gap-2">
                 <BellRing className="w-4 h-4 text-rose-600" />
                 Live Security Alerts
               </h3>
@@ -421,43 +421,43 @@ export default function DashboardView({
 
             <div className="space-y-3 max-h-[460px] overflow-y-auto pr-1">
               {alerts.length === 0 ? (
-                <p className="text-center py-6 text-slate-400 text-xs">No active security alerts.</p>
+                <p className="text-center py-6 text-oatmeal-500 text-xs font-medium">No active security alerts.</p>
               ) : (
                 alerts.slice(0, 6).map((a) => (
                   <div key={a.id} className={`p-4 rounded-xl border space-y-2.5 text-xs transition-all ${
                     a.status === 'ACTIVE'
-                      ? 'border-rose-200 dark:border-rose-900/60 bg-rose-50/50 dark:bg-rose-950/25'
-                      : 'border-slate-200 dark:border-slate-800 bg-slate-50/70 dark:bg-slate-800/40 opacity-75'
+                      ? 'border-rose-300 dark:border-rose-900/60 bg-rose-50/60 dark:bg-rose-950/25'
+                      : 'border-oatmeal-300 dark:border-pine-800 bg-oatmeal-50/70 dark:bg-pine-950/40 opacity-75'
                   }`}>
-                    <div className="flex items-center justify-between font-bold pb-1 border-b border-slate-200/50 dark:border-slate-700/50">
-                      <span className={`flex items-center gap-1.5 ${a.severity === 'CRITICAL' ? 'text-rose-700 dark:text-rose-400 font-extrabold' : 'text-amber-700 dark:text-amber-400 font-bold'}`}>
-                        <span className={`w-2 h-2 rounded-full ${a.status === 'ACTIVE' ? 'bg-rose-600 animate-ping' : 'bg-slate-400'}`} />
+                    <div className="flex items-center justify-between font-bold pb-1 border-b border-oatmeal-200 dark:border-pine-800/60">
+                      <span className={`flex items-center gap-1.5 ${a.severity === 'CRITICAL' ? 'text-rose-700 dark:text-rose-400 font-extrabold' : 'text-amber-800 dark:text-amber-300 font-bold'}`}>
+                        <span className={`w-2 h-2 rounded-full ${a.status === 'ACTIVE' ? 'bg-rose-600 animate-ping' : 'bg-oatmeal-400'}`} />
                         {a.event_type}
                       </span>
-                      <span className="text-[11px] text-slate-500 dark:text-slate-400 font-mono font-medium">
+                      <span className="text-[11px] text-oatmeal-600 dark:text-oatmeal-400 font-mono font-medium">
                         {new Date(a.timestamp || Date.now()).toLocaleTimeString()}
                       </span>
                     </div>
-                    <h4 className="font-bold text-slate-900 dark:text-slate-100 text-xs">{a.message || 'Perimeter alert detected'}</h4>
+                    <h4 className="font-bold text-pine-950 dark:text-oatmeal-100 text-xs">{a.message || 'Perimeter alert detected'}</h4>
                     
                     <div className="flex items-center gap-2 pt-1">
                       {a.status === 'ACTIVE' ? (
                         <>
                           <button
                             onClick={() => onAcknowledgeAlert(a.id)}
-                            className="flex-1 py-1.5 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-700 rounded-xl font-bold text-xs cursor-pointer shadow-2xs transition-colors"
+                            className="flex-1 py-1.5 bg-white dark:bg-pine-950 border border-oatmeal-300 dark:border-pine-800 text-pine-900 dark:text-oatmeal-200 hover:bg-oatmeal-100 dark:hover:bg-pine-900 rounded-xl font-bold text-xs cursor-pointer shadow-2xs transition-colors"
                           >
                             Acknowledge
                           </button>
                           <button
                             onClick={() => onResolveAlert(a.id)}
-                            className="flex-1 py-1.5 bg-emerald-600 text-white hover:bg-emerald-500 rounded-xl font-bold text-xs cursor-pointer shadow-xs transition-colors"
+                            className="flex-1 py-1.5 bg-pine-800 hover:bg-pine-700 text-white rounded-xl font-bold text-xs cursor-pointer shadow-xs transition-colors"
                           >
                             Resolve
                           </button>
                         </>
                       ) : (
-                        <span className="text-[11px] text-emerald-600 dark:text-emerald-400 font-bold bg-emerald-50 dark:bg-emerald-950/60 px-2 py-0.5 rounded-lg border border-emerald-200 dark:border-emerald-800">
+                        <span className="text-[11px] text-pine-800 dark:text-pine-300 font-bold bg-pine-100 dark:bg-pine-950/80 px-2.5 py-0.5 rounded-lg border border-pine-300 dark:border-pine-800">
                           Status: {a.status}
                         </span>
                       )}
@@ -470,7 +470,7 @@ export default function DashboardView({
 
           {/* Emergency Sector Lockout */}
           <div className="light-card p-5 space-y-3">
-            <h4 className="text-xs font-bold text-slate-900 dark:text-white uppercase tracking-wider border-b border-slate-100 dark:border-slate-800 pb-2">
+            <h4 className="text-xs font-bold text-pine-950 dark:text-oatmeal-100 uppercase tracking-wider border-b border-oatmeal-200 dark:border-pine-800 pb-2">
               Emergency Sector Control
             </h4>
             <button

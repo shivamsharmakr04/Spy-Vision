@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Layers, Plus, Trash2, MousePointer, Save, ShieldAlert, Sliders } from 'lucide-react';
 
-export default function ZoneEditor({ cameras, selectedCameraId, onSaveZone, onDeleteZone, existingZones }) {
+export default function ZoneEditor({ cameras = [], selectedCameraId, onSaveZone, onDeleteZone, existingZones }) {
   const [activeCamId, setActiveCamId] = useState(selectedCameraId || (cameras[0]?.id || 1));
   const [points, setPoints] = useState([]);
   const [zoneName, setZoneName] = useState('INTRUSION_ZONE_SECTOR_07W');
@@ -33,13 +33,13 @@ export default function ZoneEditor({ cameras, selectedCameraId, onSaveZone, onDe
           ctx.lineTo(pt[0] * canvas.width, pt[1] * canvas.height);
         }
         ctx.closePath();
-        ctx.fillStyle = 'rgba(6, 182, 212, 0.2)';
+        ctx.fillStyle = 'rgba(141, 102, 185, 0.25)'; // Soft lilac tint
         ctx.fill();
-        ctx.strokeStyle = '#06b6d4';
+        ctx.strokeStyle = '#8d66b9';
         ctx.lineWidth = 2;
         ctx.stroke();
 
-        ctx.fillStyle = '#06b6d4';
+        ctx.fillStyle = '#c5b0df';
         ctx.font = 'bold 11px JetBrains Mono, monospace';
         ctx.fillText(`[SAVED] ${z.name}`, z.coordinates[0][0] * canvas.width + 5, z.coordinates[0][1] * canvas.height + 15);
       });
@@ -51,14 +51,14 @@ export default function ZoneEditor({ cameras, selectedCameraId, onSaveZone, onDe
       for (let i = 1; i < points.length; i++) {
         ctx.lineTo(points[i].x, points[i].y);
       }
-      ctx.strokeStyle = '#3b82f6';
+      ctx.strokeStyle = '#59a67d'; // Pine green accent
       ctx.lineWidth = 2;
       ctx.stroke();
 
       points.forEach((pt, index) => {
         ctx.beginPath();
         ctx.arc(pt.x, pt.y, 5, 0, 2 * Math.PI);
-        ctx.fillStyle = index === 0 ? '#10b981' : '#3b82f6';
+        ctx.fillStyle = index === 0 ? '#8d66b9' : '#388a5e';
         ctx.fill();
         ctx.strokeStyle = '#ffffff';
         ctx.lineWidth = 2;
@@ -109,22 +109,22 @@ export default function ZoneEditor({ cameras, selectedCameraId, onSaveZone, onDe
       {/* Top Header Card */}
       <div className="light-card p-5 flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
-          <h2 className="text-base sm:text-lg font-bold text-slate-900 dark:text-white flex items-center gap-2">
-            <Layers className="w-5 h-5 text-blue-600" />
+          <h2 className="text-base sm:text-lg font-bold text-pine-950 dark:text-oatmeal-50 flex items-center gap-2">
+            <Layers className="w-5 h-5 text-pine-800 dark:text-lilac-300" />
             AI Detection Zones & Perimeter Geofencing
           </h2>
-          <p className="text-xs text-slate-500 dark:text-slate-400 font-medium mt-1">
+          <p className="text-xs text-pine-800/80 dark:text-oatmeal-300 font-medium mt-1">
             Draw custom polygonal tripwires and sensitivity thresholds directly over surveillance feeds.
           </p>
         </div>
 
         {/* Camera Selector Dropdown */}
         <div className="flex items-center gap-3">
-          <span className="text-xs font-bold text-slate-700 dark:text-slate-300">Target Camera:</span>
+          <span className="text-xs font-bold text-pine-950 dark:text-oatmeal-200">Target Camera:</span>
           <select 
             value={activeCamId} 
             onChange={(e) => setActiveCamId(Number(e.target.value))}
-            className="px-3.5 py-2 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-xs font-bold text-slate-900 dark:text-white focus:outline-hidden focus:ring-2 focus:ring-blue-500 cursor-pointer shadow-xs"
+            className="px-3.5 py-2 rounded-xl border border-oatmeal-300 dark:border-pine-800 bg-white dark:bg-[#0e1c16] text-xs font-bold text-pine-950 dark:text-oatmeal-50 focus:outline-hidden focus:ring-2 focus:ring-lilac-500 cursor-pointer shadow-xs"
           >
             {cameras.map((c) => (
               <option key={c.id} value={c.id}>
@@ -140,10 +140,10 @@ export default function ZoneEditor({ cameras, selectedCameraId, onSaveZone, onDe
         {/* Interactive Zone Canvas Area (8 Cols) */}
         <div className="lg:col-span-8 space-y-3">
           <div className="light-card overflow-hidden p-2.5">
-            <div className="relative aspect-video bg-slate-950 rounded-2xl overflow-hidden border border-slate-800 shadow-2xl flex items-center justify-center">
+            <div className="relative aspect-video bg-[#08120d] rounded-2xl overflow-hidden border border-pine-800 shadow-2xl flex items-center justify-center">
               
               {/* Standby Canvas Background Grid */}
-              <div className="absolute inset-0 bg-[radial-gradient(#1e3a8a_1px,transparent_1px)] [background-size:20px_20px] opacity-30" />
+              <div className="absolute inset-0 bg-[radial-gradient(#296f4b_1px,transparent_1px)] [background-size:20px_20px] opacity-25" />
               
               <canvas
                 ref={canvasRef}
@@ -154,33 +154,33 @@ export default function ZoneEditor({ cameras, selectedCameraId, onSaveZone, onDe
               />
 
               {points.length === 0 && (
-                <div className="absolute top-4 left-4 z-20 pointer-events-none bg-slate-950/80 backdrop-blur-md px-3.5 py-1.5 rounded-xl border border-slate-800 text-white text-xs font-mono flex items-center gap-2">
-                  <MousePointer className="w-3.5 h-3.5 text-blue-400" />
-                  <span>Click to plot perimeter geofence anchor points</span>
+                <div className="absolute top-4 left-4 z-20 pointer-events-none bg-[#08120d]/85 backdrop-blur-md px-3.5 py-1.5 rounded-xl border border-pine-700 text-oatmeal-100 text-xs font-mono flex items-center gap-2">
+                  <MousePointer className="w-3.5 h-3.5 text-lilac-300" />
+                  <span>Click anywhere to plot geofence boundary coordinates</span>
                 </div>
               )}
             </div>
 
             {/* Canvas Actions Sub-Bar */}
-            <div className="p-3 bg-slate-50 dark:bg-slate-950/60 rounded-xl border border-slate-200 dark:border-slate-800 flex flex-wrap items-center justify-between text-xs font-medium gap-3 mt-2.5">
-              <span className="font-mono text-slate-500 dark:text-slate-400">
-                Points Plotted: <strong className="text-blue-600 dark:text-blue-400 font-bold">{points.length}</strong> (min. 3 for polygon)
+            <div className="p-3 bg-oatmeal-50 dark:bg-[#07110c] rounded-xl border border-oatmeal-300 dark:border-pine-800 flex flex-wrap items-center justify-between text-xs font-medium gap-3 mt-2.5">
+              <span className="font-mono text-oatmeal-700 dark:text-oatmeal-300">
+                Points Plotted: <strong className="text-pine-800 dark:text-lilac-300 font-bold">{points.length}</strong> (min. 3 for polygon)
               </span>
 
               <div className="flex items-center gap-2">
                 <button
                   type="button"
                   onClick={handleClear}
-                  className="px-3.5 py-1.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-700 font-bold cursor-pointer transition-colors shadow-2xs"
+                  className="px-3.5 py-1.5 rounded-xl border border-oatmeal-300 dark:border-pine-800 bg-white dark:bg-pine-950 text-pine-950 dark:text-oatmeal-200 hover:bg-oatmeal-100 dark:hover:bg-pine-900 font-bold cursor-pointer transition-colors shadow-2xs"
                 >
                   Clear Points
                 </button>
                 <button
                   type="button"
                   onClick={handleSave}
-                  className="px-4 py-1.5 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-bold cursor-pointer transition-colors shadow-sm flex items-center gap-1.5"
+                  className="px-4 py-1.5 rounded-xl bg-pine-800 hover:bg-pine-700 text-white font-bold cursor-pointer transition-colors shadow-sm flex items-center gap-1.5 ring-2 ring-lilac-400/30"
                 >
-                  <Save className="w-3.5 h-3.5" />
+                  <Save className="w-3.5 h-3.5 text-lilac-300" />
                   Save Polygon Zone
                 </button>
               </div>
@@ -192,32 +192,32 @@ export default function ZoneEditor({ cameras, selectedCameraId, onSaveZone, onDe
         <div className="lg:col-span-4 space-y-4">
           
           <div className="light-card p-5 space-y-4">
-            <h3 className="text-sm font-bold text-slate-900 dark:text-white pb-3 border-b border-slate-100 dark:border-slate-800 flex items-center gap-2">
-              <Sliders className="w-4 h-4 text-blue-600" />
+            <h3 className="text-sm font-bold text-pine-950 dark:text-oatmeal-50 pb-3 border-b border-oatmeal-200 dark:border-pine-800 flex items-center gap-2">
+              <Sliders className="w-4 h-4 text-pine-800 dark:text-lilac-300" />
               Zone Parameters
             </h3>
 
             <div className="space-y-3 text-xs">
               <div>
-                <label className="block font-bold text-slate-700 dark:text-slate-300 mb-1">
+                <label className="block font-bold text-pine-950 dark:text-oatmeal-200 mb-1">
                   Zone Identifier
                 </label>
                 <input
                   type="text"
                   value={zoneName}
                   onChange={(e) => setZoneName(e.target.value)}
-                  className="w-full px-3 py-2 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white font-mono font-bold focus:outline-hidden focus:ring-2 focus:ring-blue-500"
+                  className="w-full px-3 py-2 rounded-xl border border-oatmeal-300 dark:border-pine-800 bg-oatmeal-50 dark:bg-[#08120d] text-pine-950 dark:text-oatmeal-50 font-mono font-bold focus:outline-hidden focus:ring-2 focus:ring-lilac-500"
                 />
               </div>
 
               <div>
-                <label className="block font-bold text-slate-700 dark:text-slate-300 mb-1">
+                <label className="block font-bold text-pine-950 dark:text-oatmeal-200 mb-1">
                   Detection Classification
                 </label>
                 <select
                   value={zoneType}
                   onChange={(e) => setZoneType(e.target.value)}
-                  className="w-full px-3 py-2 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white font-bold focus:outline-hidden focus:ring-2 focus:ring-blue-500 cursor-pointer"
+                  className="w-full px-3 py-2 rounded-xl border border-oatmeal-300 dark:border-pine-800 bg-oatmeal-50 dark:bg-[#08120d] text-pine-950 dark:text-oatmeal-50 font-bold focus:outline-hidden focus:ring-2 focus:ring-lilac-500 cursor-pointer"
                 >
                   <option value="INTRUSION_ZONE">Perimeter Tripwire (Intrusion)</option>
                   <option value="RESTRICTED_AREA">Restricted Security Buffer</option>
@@ -228,8 +228,8 @@ export default function ZoneEditor({ cameras, selectedCameraId, onSaveZone, onDe
 
               <div>
                 <div className="flex items-center justify-between font-bold mb-1">
-                  <label className="text-slate-700 dark:text-slate-300">AI Sensitivity Threshold</label>
-                  <span className="text-blue-600 dark:text-blue-400 font-mono">{Math.round(sensitivity * 100)}%</span>
+                  <label className="text-pine-950 dark:text-oatmeal-200">AI Sensitivity Threshold</label>
+                  <span className="text-lilac-700 dark:text-lilac-300 font-mono font-bold">{Math.round(sensitivity * 100)}%</span>
                 </div>
                 <input
                   type="range"
@@ -238,7 +238,7 @@ export default function ZoneEditor({ cameras, selectedCameraId, onSaveZone, onDe
                   step="0.01"
                   value={sensitivity}
                   onChange={(e) => setSensitivity(e.target.value)}
-                  className="w-full accent-blue-600 cursor-pointer"
+                  className="w-full accent-pine-800 dark:accent-lilac-400 cursor-pointer"
                 />
               </div>
             </div>
@@ -246,24 +246,24 @@ export default function ZoneEditor({ cameras, selectedCameraId, onSaveZone, onDe
 
           {/* Active Saved Zones List */}
           <div className="light-card p-5 space-y-3">
-            <h4 className="text-xs font-bold text-slate-900 dark:text-white uppercase tracking-wider pb-2 border-b border-slate-100 dark:border-slate-800">
+            <h4 className="text-xs font-bold text-pine-950 dark:text-oatmeal-50 uppercase tracking-wider pb-2 border-b border-oatmeal-200 dark:border-pine-800">
               Active Zones for this Feed ({existingZones?.length || 0})
             </h4>
 
             <div className="space-y-2 max-h-[220px] overflow-y-auto pr-1">
               {!existingZones || existingZones.length === 0 ? (
-                <p className="text-center py-4 text-slate-400 text-xs">No zones saved on this camera.</p>
+                <p className="text-center py-4 text-oatmeal-500 text-xs">No zones saved on this camera.</p>
               ) : (
                 existingZones.map((z) => (
-                  <div key={z.id} className="p-3 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/60 flex items-center justify-between text-xs">
+                  <div key={z.id} className="p-3 rounded-xl border border-oatmeal-300 dark:border-pine-800 bg-oatmeal-50 dark:bg-[#08120d] flex items-center justify-between text-xs">
                     <div>
-                      <p className="font-bold text-slate-900 dark:text-white">{z.name}</p>
-                      <p className="text-[10px] text-slate-500 dark:text-slate-400 font-mono">{z.zone_type} • Sens: {Math.round((z.sensitivity || 0.85) * 100)}%</p>
+                      <p className="font-bold text-pine-950 dark:text-oatmeal-100">{z.name}</p>
+                      <p className="text-[10px] text-lilac-700 dark:text-lilac-300 font-mono font-bold">{z.zone_type} • Sens: {Math.round((z.sensitivity || 0.85) * 100)}%</p>
                     </div>
                     <button
                       type="button"
                       onClick={() => onDeleteZone(z.id)}
-                      className="p-1 text-slate-400 hover:text-rose-600 cursor-pointer transition-colors"
+                      className="p-1 text-oatmeal-500 hover:text-rose-600 cursor-pointer transition-colors"
                       title="Delete Zone"
                     >
                       <Trash2 className="w-4 h-4" />

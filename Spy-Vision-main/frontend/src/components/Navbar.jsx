@@ -52,7 +52,7 @@ export default function Navbar({
   ];
 
   return (
-    <header className="sticky top-0 z-40 bg-white/90 dark:bg-slate-900/90 backdrop-blur-md border-b border-slate-200/80 dark:border-slate-800/80 shadow-xs font-sans transition-colors">
+    <header className="sticky top-0 z-40 bg-[#faf8f5]/95 dark:bg-[#0e1c16]/95 backdrop-blur-md border-b border-oatmeal-300/80 dark:border-pine-800/80 shadow-xs font-sans transition-colors">
       {/* Top Bar */}
       <div className="max-w-[1920px] mx-auto px-3 sm:px-6 py-2.5 flex items-center justify-between gap-3">
         
@@ -63,27 +63,27 @@ export default function Navbar({
             onClick={() => setActiveView('dashboard')}
             className="flex items-center gap-3 text-left cursor-pointer group"
           >
-            <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-blue-700 to-blue-500 flex items-center justify-center text-white shadow-md shadow-blue-500/25 group-hover:scale-105 transition-transform">
+            <div className="w-10 h-10 rounded-xl bg-pine-800 text-white flex items-center justify-center shadow-md shadow-pine-900/25 ring-2 ring-lilac-300/40 group-hover:scale-105 transition-transform">
               <ShieldAlert className="w-5 h-5" />
             </div>
             <div>
               <div className="flex items-center gap-2">
-                <span className="text-sm sm:text-base font-extrabold tracking-tight text-slate-900 dark:text-white flex items-center gap-1.5">
+                <span className="text-sm sm:text-base font-extrabold tracking-tight text-pine-950 dark:text-oatmeal-50 flex items-center gap-1.5">
                   SPY-VISION
-                  <span className="text-[10px] px-2 py-0.5 rounded-full bg-blue-50 dark:bg-blue-950/80 border border-blue-200 dark:border-blue-800 text-blue-700 dark:text-blue-300 font-bold font-mono">
+                  <span className="text-[10px] px-2 py-0.5 rounded-full bg-lilac-100 dark:bg-lilac-950/80 border border-lilac-300 dark:border-lilac-800 text-lilac-800 dark:text-lilac-200 font-bold font-mono">
                     DEFENSE-04
                   </span>
                 </span>
               </div>
-              <p className="text-[10px] text-slate-500 dark:text-slate-400 font-medium hidden xs:block">
-                Border Surveillance & Video Analytics Console
+              <p className="text-[10px] text-pine-700/80 dark:text-oatmeal-300 font-medium hidden xs:block">
+                Border Surveillance & Analytics Console
               </p>
             </div>
           </button>
         </div>
 
         {/* Desktop Navigation Tabs */}
-        <nav className="hidden lg:flex items-center gap-1.5 bg-slate-100/90 dark:bg-slate-950/80 p-1.5 rounded-2xl border border-slate-200/80 dark:border-slate-800">
+        <nav className="hidden lg:flex items-center gap-1.5 bg-oatmeal-200/60 dark:bg-[#07110c]/80 p-1.5 rounded-2xl border border-oatmeal-300/80 dark:border-pine-800">
           {navItems.map((item) => {
             const Icon = item.icon;
             const isActive = activeView === item.id;
@@ -93,11 +93,11 @@ export default function Navbar({
                 onClick={() => setActiveView(item.id)}
                 className={`px-3.5 py-2 rounded-xl text-xs font-semibold flex items-center gap-2 transition-all cursor-pointer ${
                   isActive
-                    ? 'bg-blue-600 text-white shadow-sm font-bold scale-[1.02]'
-                    : 'text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white hover:bg-white dark:hover:bg-slate-800/80'
+                    ? 'bg-pine-800 text-white shadow-sm font-bold scale-[1.02]'
+                    : 'text-oatmeal-800 dark:text-oatmeal-200 hover:text-pine-800 dark:hover:text-lilac-200 hover:bg-white/80 dark:hover:bg-pine-900/60'
                 }`}
               >
-                <Icon className={`w-3.5 h-3.5 ${isActive ? 'text-white' : 'text-slate-400 dark:text-slate-400'}`} />
+                <Icon className={`w-3.5 h-3.5 ${isActive ? 'text-white' : 'text-pine-600 dark:text-lilac-300'}`} />
                 {item.label}
               </button>
             );
@@ -111,55 +111,55 @@ export default function Navbar({
           <div className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold transition-all ${
             activeAlertCount > 0 
               ? 'bg-rose-600 text-white shadow-sm shadow-rose-600/30 animate-pulse' 
-              : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700'
+              : 'bg-oatmeal-200/80 dark:bg-pine-950/80 text-pine-800 dark:text-oatmeal-200 border border-oatmeal-300 dark:border-pine-800'
           }`}>
             <ShieldAlert className="w-3.5 h-3.5" />
             <span>{activeAlertCount} Alert{activeAlertCount === 1 ? '' : 's'}</span>
           </div>
 
-          {/* Audio Chime Toggle */}
+          {/* Audio Chime Toggle in Soft Lilac */}
           <button
             onClick={() => setAudioEnabled(!audioEnabled)}
             className={`p-2 rounded-xl border text-xs font-semibold flex items-center gap-1.5 cursor-pointer transition-all ${
               audioEnabled
-                ? 'bg-blue-50 dark:bg-blue-950/60 border-blue-200 dark:border-blue-800 text-blue-700 dark:text-blue-300 hover:bg-blue-100 dark:hover:bg-blue-900/60'
-                : 'bg-slate-100 dark:bg-slate-800/60 border-slate-200 dark:border-slate-700 text-slate-400'
+                ? 'bg-lilac-100 dark:bg-lilac-950/60 border-lilac-300 dark:border-lilac-800 text-lilac-800 dark:text-lilac-200 hover:bg-lilac-200 dark:hover:bg-lilac-900/60'
+                : 'bg-oatmeal-200/60 dark:bg-pine-950/60 border-oatmeal-300 dark:border-pine-800 text-oatmeal-500'
             }`}
             title={audioEnabled ? 'Alert Audio On' : 'Alert Audio Muted'}
           >
-            {audioEnabled ? <Volume2 className="w-4 h-4 text-blue-600 dark:text-blue-400" /> : <VolumeX className="w-4 h-4" />}
+            {audioEnabled ? <Volume2 className="w-4 h-4 text-lilac-700 dark:text-lilac-300" /> : <VolumeX className="w-4 h-4" />}
           </button>
 
           {/* Light/Dark Theme Switcher */}
           <button
             onClick={() => setTheme && setTheme(theme === 'dark' ? 'light' : 'dark')}
-            className="p-2 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-700 cursor-pointer transition-all"
+            className="p-2 rounded-xl border border-oatmeal-300 dark:border-pine-800 bg-oatmeal-100 dark:bg-pine-950 text-pine-800 dark:text-oatmeal-200 hover:bg-oatmeal-200 dark:hover:bg-pine-900 cursor-pointer transition-all"
             title="Toggle Light/Dark Theme"
           >
-            {theme === 'dark' ? <Sun className="w-4 h-4 text-amber-400" /> : <Moon className="w-4 h-4 text-slate-600" />}
+            {theme === 'dark' ? <Sun className="w-4 h-4 text-amber-400" /> : <Moon className="w-4 h-4 text-pine-800" />}
           </button>
 
-          {/* Clock Widget */}
-          <div className="hidden xl:block text-right text-xs font-bold text-slate-700 dark:text-slate-300 bg-slate-100/90 dark:bg-slate-800/90 px-3 py-1.5 rounded-xl border border-slate-200 dark:border-slate-700 font-mono">
+          {/* Clock Widget in Oatmeal & Pine */}
+          <div className="hidden xl:block text-right text-xs font-bold text-pine-900 dark:text-oatmeal-200 bg-oatmeal-200/80 dark:bg-pine-950/80 px-3 py-1.5 rounded-xl border border-oatmeal-300 dark:border-pine-800 font-mono">
             {timeStr}
           </div>
 
           {/* Verified Operator Profile Pill */}
           {currentUser && (
-            <div className="flex items-center gap-2 pl-2 border-l border-slate-200 dark:border-slate-800">
+            <div className="flex items-center gap-2 pl-2 border-l border-oatmeal-300 dark:border-pine-800">
               <div className="hidden sm:flex flex-col items-end text-right">
-                <span className="text-xs font-bold text-slate-900 dark:text-white flex items-center gap-1">
-                  <ShieldCheck className="w-3.5 h-3.5 text-emerald-500" />
+                <span className="text-xs font-bold text-pine-950 dark:text-oatmeal-50 flex items-center gap-1">
+                  <ShieldCheck className="w-3.5 h-3.5 text-pine-600 dark:text-pine-400" />
                   {currentUser.full_name || currentUser.username}
                 </span>
-                <span className="text-[10px] text-slate-500 dark:text-slate-400 font-mono font-medium">
+                <span className="text-[10px] text-lilac-700 dark:text-lilac-300 font-mono font-bold">
                   {currentUser.badge_number || 'VERIFIED OPERATOR'}
                 </span>
               </div>
 
               <button
                 onClick={onLogout}
-                className="px-2.5 py-1.5 rounded-xl border border-rose-200 dark:border-rose-900/60 bg-rose-50 dark:bg-rose-950/40 text-rose-700 dark:text-rose-300 hover:bg-rose-100 dark:hover:bg-rose-900/60 text-xs font-bold flex items-center gap-1.5 cursor-pointer transition-all shadow-xs"
+                className="px-2.5 py-1.5 rounded-xl border border-rose-300 dark:border-rose-900/60 bg-rose-50 dark:bg-rose-950/40 text-rose-700 dark:text-rose-300 hover:bg-rose-100 dark:hover:bg-rose-900/60 text-xs font-bold flex items-center gap-1.5 cursor-pointer transition-all shadow-xs"
                 title="Sign Out Verified Operator"
               >
                 <LogOut className="w-3.5 h-3.5" />
@@ -171,7 +171,7 @@ export default function Navbar({
           {/* Mobile Navigation Hamburger Menu Toggle */}
           <button
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            className="lg:hidden p-2 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-700 dark:text-slate-200 hover:bg-slate-100 cursor-pointer"
+            className="lg:hidden p-2 rounded-xl border border-oatmeal-300 dark:border-pine-800 bg-oatmeal-100 dark:bg-pine-950 text-pine-900 dark:text-oatmeal-200 hover:bg-oatmeal-200 cursor-pointer"
             aria-label="Toggle navigation menu"
           >
             {mobileMenuOpen ? <X className="w-4 h-4" /> : <Menu className="w-4 h-4" />}
@@ -182,7 +182,7 @@ export default function Navbar({
 
       {/* Mobile Navigation Dropdown Menu */}
       {mobileMenuOpen && (
-        <div className="lg:hidden p-3 bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800 space-y-1.5">
+        <div className="lg:hidden p-3 bg-oatmeal-50 dark:bg-[#0e1c16] border-b border-oatmeal-300 dark:border-pine-800 space-y-1.5">
           {navItems.map((item) => {
             const Icon = item.icon;
             const isActive = activeView === item.id;
@@ -195,8 +195,8 @@ export default function Navbar({
                 }}
                 className={`w-full px-4 py-2.5 rounded-xl text-xs font-bold flex items-center gap-3 transition-colors ${
                   isActive
-                    ? 'bg-blue-600 text-white shadow-xs'
-                    : 'text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800'
+                    ? 'bg-pine-800 text-white shadow-xs'
+                    : 'text-oatmeal-900 dark:text-oatmeal-100 hover:bg-oatmeal-200 dark:hover:bg-pine-900/80'
                 }`}
               >
                 <Icon className="w-4 h-4" />

@@ -292,16 +292,16 @@ export default function App() {
   // Loading state during auth check
   if (authChecking) {
     return (
-      <div className="min-h-screen bg-slate-950 flex flex-col items-center justify-center text-white space-y-4 font-mono">
-        <div className="w-10 h-10 border-4 border-blue-500 border-t-transparent rounded-full animate-spin" />
-        <div className="text-sm font-bold tracking-widest uppercase text-slate-300">
-          Verifying Operator Security Clearance...
+      <div className="min-h-screen bg-oatmeal-100 dark:bg-[#0c1511] flex flex-col items-center justify-center text-oatmeal-950 dark:text-oatmeal-100 space-y-4 font-mono">
+        <div className="w-10 h-10 border-4 border-pine-700 border-t-lilac-500 rounded-full animate-spin" />
+        <div className="text-xs font-bold tracking-widest uppercase text-pine-800 dark:text-lilac-300">
+          Verifying Operator Clearance Credentials...
         </div>
       </div>
     );
   }
 
-  // If not authenticated, require real verified operator login or account creation
+  // If not authenticated, render verified operator auth portal
   if (!currentUser) {
     return <AuthPage onAuthSuccess={handleAuthSuccess} theme={theme} />;
   }
@@ -310,7 +310,7 @@ export default function App() {
 
   return (
     <div className={`min-h-screen transition-colors duration-300 flex flex-col font-sans ${
-      theme === 'dark' ? 'bg-[#050811] text-slate-100' : 'bg-slate-50 text-slate-900'
+      theme === 'dark' ? 'bg-[#0c1511] text-oatmeal-50' : 'bg-[#f5f1e8] text-oatmeal-950'
     }`}>
       {/* Top Navbar */}
       <Navbar
@@ -329,9 +329,11 @@ export default function App() {
       {/* Main Content Router */}
       <main className="flex-1">
         {!backendOnline && (
-          <div role="status" className="mx-4 mt-4 rounded-xl border border-amber-300 bg-amber-50 px-4 py-2.5 text-xs font-semibold text-amber-900 shadow-xs flex items-center justify-between">
-            <span>Operational Notice: Backend service connecting... Local mock cache active.</span>
-            <span className="font-mono text-[10px] bg-amber-200/60 px-2 py-0.5 rounded">AUTO-RETRYING</span>
+          <div role="status" className="mx-4 mt-4 rounded-xl border border-oatmeal-300 dark:border-pine-800 bg-oatmeal-50 dark:bg-pine-950/40 px-4 py-2.5 text-xs font-semibold text-pine-900 dark:text-lilac-200 shadow-xs flex items-center justify-between">
+            <span>Operational Notice: Backend service connecting... Local cached datasets ready.</span>
+            <span className="font-mono text-[10px] bg-lilac-100 dark:bg-lilac-950 text-lilac-800 dark:text-lilac-200 px-2 py-0.5 rounded border border-lilac-200 dark:border-lilac-800">
+              STANDBY SYNC
+            </span>
           </div>
         )}
         {actionError && (
@@ -391,11 +393,12 @@ export default function App() {
         )}
       </main>
 
-      {/* High-security Command Footer */}
-      <footer className="border-t border-slate-200 dark:border-slate-800 bg-white/80 dark:bg-slate-950/80 py-3 px-4 text-center text-slate-500 dark:text-slate-400 text-xs font-mono backdrop-blur-md flex flex-wrap items-center justify-between gap-2">
-        <span>IBVAP v1.0.0 — Intelligent Border Video Analytics Platform | Ministry of Home Affairs</span>
-        <span className="text-[11px] text-emerald-600 dark:text-emerald-400 font-bold">
-          SECURE PROTOCOL ACTIVE • OPERATOR: {currentUser.username.toUpperCase()}
+      {/* Oatmeal & Pine Command Footer */}
+      <footer className="border-t border-oatmeal-300 dark:border-pine-900 bg-oatmeal-50/90 dark:bg-[#0e1c16]/90 py-3 px-4 text-center text-oatmeal-800 dark:text-oatmeal-300 text-xs font-mono backdrop-blur-md flex flex-wrap items-center justify-between gap-2">
+        <span>IBVAP v1.0.0 — Intelligent Border Surveillance Platform | Ministry of Home Affairs</span>
+        <span className="text-[11px] text-pine-800 dark:text-lilac-300 font-bold flex items-center gap-1.5">
+          <span className="w-2 h-2 rounded-full bg-pine-600 dark:bg-pine-400" />
+          ACTIVE DEFENSE NODE • OPERATOR: {currentUser.username.toUpperCase()}
         </span>
       </footer>
     </div>
