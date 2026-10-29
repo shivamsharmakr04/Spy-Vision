@@ -17,6 +17,7 @@ import {
   Radio,
   Github
 } from 'lucide-react';
+import GitPushModal from './GitPushModal';
 
 export default function Navbar({ 
   activeView, 
@@ -32,6 +33,7 @@ export default function Navbar({
 }) {
   const [timeStr, setTimeStr] = useState('');
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [gitModalOpen, setGitModalOpen] = useState(false);
 
   useEffect(() => {
     const updateTime = () => {
@@ -131,17 +133,17 @@ export default function Navbar({
             {audioEnabled ? <Volume2 className="w-4 h-4 text-lilac-800 dark:text-lilac-300" /> : <VolumeX className="w-4 h-4" />}
           </button>
 
-          {/* GitHub Repository Icon */}
-          <a
-            href="https://github.com/shivamsharmakr04/Spy-Vision"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="p-2 rounded-xl border border-oatmeal-300 dark:border-pine-800 bg-oatmeal-100 dark:bg-pine-950 text-[#163e2a] dark:text-oatmeal-200 hover:bg-pine-800 hover:text-white dark:hover:bg-pine-800 dark:hover:text-white transition-all cursor-pointer shadow-2xs"
-            title="GitHub Repository (shivamsharmakr04/Spy-Vision)"
-            aria-label="View on GitHub"
+          {/* Git Sync & Push Modal Trigger Button */}
+          <button
+            type="button"
+            onClick={() => setGitModalOpen(true)}
+            className="p-2 rounded-xl border border-oatmeal-300 dark:border-pine-800 bg-oatmeal-100 dark:bg-pine-950 text-[#163e2a] dark:text-oatmeal-200 hover:bg-pine-800 hover:text-white dark:hover:bg-pine-800 dark:hover:text-white transition-all cursor-pointer shadow-2xs flex items-center gap-1.5"
+            title="Git Push & Sync Repository"
+            aria-label="Direct Git Push to GitHub"
           >
             <Github className="w-4 h-4" />
-          </a>
+            <span className="hidden xl:inline text-[11px] font-bold font-mono">Push</span>
+          </button>
 
           {/* Light/Dark Theme Switcher */}
           <button
@@ -219,6 +221,12 @@ export default function Navbar({
           })}
         </div>
       )}
+
+      {/* Direct Git Push Modal */}
+      <GitPushModal 
+        isOpen={gitModalOpen} 
+        onClose={() => setGitModalOpen(false)} 
+      />
     </header>
   );
 }

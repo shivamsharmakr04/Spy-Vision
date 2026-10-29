@@ -24,6 +24,7 @@ from app.routers.events import router as events_router
 from app.routers.alerts import router as alerts_router
 from app.routers.media import router as media_router
 from app.routers.auth import router as auth_router
+from app.routers.git_sync import router as git_router
 from app.websocket.manager import manager
 from app.routers import watchlist
 from app.routers import dashboard
@@ -92,6 +93,7 @@ app.include_router(watchlist.router)
 app.include_router(dashboard.router)
 app.include_router(media_router)
 app.include_router(auth_router)
+app.include_router(git_router)
 
 
 @app.get("/health")

@@ -189,6 +189,10 @@ export const api = {
   },
   updateVehicle: (id, data) => fetchJSON(`/watchlist/vehicles/${id}`, { method: 'PUT', body: JSON.stringify(data) }),
   deleteVehicle: (id) => fetchJSON(`/watchlist/vehicles/${id}`, { method: 'DELETE' }),
+
+  // Git Repository Operations
+  getGitStatus: () => fetchJSON('/git/status'),
+  pushGitCode: (data = {}) => fetchJSON('/git/push', { method: 'POST', body: JSON.stringify(data) }),
 };
 
 // WebSocket Alert Manager
