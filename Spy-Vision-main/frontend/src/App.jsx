@@ -24,9 +24,18 @@ export default function App() {
   const [activeView, setActiveView] = useState('dashboard');
   const [wsStatus, setWsStatus] = useState('DISCONNECTED');
   const [audioEnabled, setAudioEnabled] = useState(true);
-  const [theme, setTheme] = useState('light');
+  const [theme, setTheme] = useState(() => {
+    try {
+      return localStorage.getItem('spyvision_theme') || 'dark';
+    } catch {
+      return 'dark';
+    }
+  });
 
   useEffect(() => {
+    try {
+      localStorage.setItem('spyvision_theme', theme);
+    } catch {}
     if (theme === 'dark') {
       document.documentElement.classList.add('dark');
       document.body.classList.add('dark');
@@ -393,22 +402,23 @@ export default function App() {
         )}
       </main>
 
-      {/* Oatmeal & Pine Command Footer */}
-      <footer className="border-t border-oatmeal-300 dark:border-pine-900 bg-oatmeal-50/95 dark:bg-[#0c1812]/95 py-3 px-4 text-center text-[#273e31] dark:text-oatmeal-300 text-xs font-mono backdrop-blur-md flex flex-wrap items-center justify-between gap-2">
+      {/* Modern Tactical Command Footer */}
+      <footer className="border-t border-slate-200 dark:border-slate-800/80 bg-white/95 dark:bg-slate-900/95 py-3 px-4 text-center text-slate-600 dark:text-slate-400 text-xs font-mono backdrop-blur-md flex flex-wrap items-center justify-between gap-3 transition-colors">
         <div className="flex items-center gap-3">
-          <span>IBVAP v1.0.0 — Intelligent Border Surveillance Platform | Ministry of Home Affairs</span>
+          <span className="font-semibold text-slate-800 dark:text-slate-300">SPY-VISION IBVAP v1.0 • Intelligent Border Surveillance Console</span>
+          <span className="hidden sm:inline text-slate-300 dark:text-slate-700">|</span>
           <a 
             href="https://github.com/shivamsharmakr04/Spy-Vision" 
             target="_blank" 
             rel="noopener noreferrer" 
-            className="text-pine-800 dark:text-lilac-300 hover:underline font-bold"
+            className="text-emerald-700 dark:text-cyan-400 hover:underline font-bold transition-colors"
           >
             GitHub: shivamsharmakr04/Spy-Vision
           </a>
         </div>
-        <span className="text-[11px] text-pine-900 dark:text-lilac-300 font-bold flex items-center gap-1.5">
-          <span className="w-2 h-2 rounded-full bg-pine-600 dark:bg-pine-400" />
-          ACTIVE DEFENSE NODE • OPERATOR: {currentUser.username.toUpperCase()}
+        <span className="text-[11px] text-slate-700 dark:text-slate-300 font-bold flex items-center gap-2">
+          <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+          ACTIVE DEFENSE NODE • OPERATOR: <span className="text-emerald-700 dark:text-emerald-400 font-mono font-bold">{currentUser.username.toUpperCase()}</span>
         </span>
       </footer>
     </div>
