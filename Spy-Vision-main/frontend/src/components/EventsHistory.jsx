@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
-import { FileText, Search, RefreshCw, Eye } from 'lucide-react';
+import { FileText, Search, RefreshCw, Eye, ShieldAlert, X, Filter } from 'lucide-react';
 
-export default function EventsHistory({ events, cameras, onRefreshEvents }) {
+export default function EventsHistory({ events = [], cameras = [], onRefreshEvents }) {
   const [selectedCamera, setSelectedCamera] = useState('');
   const [selectedEventType, setSelectedEventType] = useState('');
   const [selectedSeverity, setSelectedSeverity] = useState('');
@@ -22,156 +22,166 @@ export default function EventsHistory({ events, cameras, onRefreshEvents }) {
   };
 
   return (
-    <div className="p-4 md:p-6 space-y-6 max-w-[1920px] mx-auto font-sans text-slate-900 select-none">
-      {/* Header */}
+    <div className="p-3 sm:p-6 space-y-5 max-w-[1920px] mx-auto font-sans transition-colors">
+      
+      {/* Top Header Card */}
       <div className="light-card p-5 flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
-          <h2 className="text-base font-bold text-slate-900 flex items-center gap-2">
+          <h2 className="text-base sm:text-lg font-bold text-slate-900 dark:text-white flex items-center gap-2">
             <FileText className="w-5 h-5 text-blue-600" />
             Surveillance Event Audit Logs
           </h2>
-          <p className="text-xs text-slate-500 font-medium mt-0.5">
-            Filter past perimeter intrusions, plate recognition hits, and biometric surveillance event logs.
+          <p className="text-xs text-slate-500 dark:text-slate-400 font-medium mt-1">
+            Historical audit log of perimeter intrusions, vehicle plates, and threat detections.
           </p>
         </div>
 
         <button
           onClick={onRefreshEvents}
-          className="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold rounded-xl flex items-center gap-2 cursor-pointer transition-colors"
+          className="px-4 py-2 bg-white dark:bg-slate-800 hover:bg-slate-100 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-slate-700 text-xs font-bold rounded-xl flex items-center gap-2 cursor-pointer transition-colors shadow-2xs"
         >
-          <RefreshCw className="w-4 h-4" />
-          Refresh Logs
+          <RefreshCw className="w-4 h-4 text-blue-600" />
+          Refresh Audit Ledger
         </button>
       </div>
 
       {/* Filter Toolbar */}
       <div className="light-card p-5 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 text-xs font-medium">
         <div>
-          <label className="block text-xs font-semibold text-slate-500 mb-1">Target Camera</label>
+          <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">Target Camera</label>
           <select
             value={selectedCamera}
             onChange={(e) => setSelectedCamera(e.target.value)}
-            className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs text-slate-900 font-semibold focus:outline-none focus:border-blue-500 cursor-pointer"
+            className="w-full px-3 py-2 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white font-medium"
           >
-            <option value="">All Cameras ({cameras.length})</option>
-            {cameras.map(c => (
+            <option value="">All Cameras</option>
+            {cameras.map((c) => (
               <option key={c.id} value={c.id}>{c.name}</option>
             ))}
           </select>
         </div>
 
         <div>
-          <label className="block text-xs font-semibold text-slate-500 mb-1">Event Category</label>
+          <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">Event Type</label>
           <select
             value={selectedEventType}
             onChange={(e) => setSelectedEventType(e.target.value)}
-            className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs text-slate-900 font-semibold focus:outline-none focus:border-blue-500 cursor-pointer"
+            className="w-full px-3 py-2 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white font-medium"
           >
-            <option value="">All Event Categories</option>
-            <option value="INTRUSION">Intrusion Breach</option>
-            <option value="ANPR_MATCH">ANPR Plate Hit</option>
-            <option value="FACE_MATCH">Biometric Face Watchlist</option>
+            <option value="">All Types</option>
+            <option value="INTRUSION">INTRUSION</option>
+            <option value="ANPR_MATCH">ANPR MATCH</option>
+            <option value="FACE_RECOGNITION">FACE RECOGNITION</option>
+            <option value="LOITERING">LOITERING</option>
+            <option value="OBJECT_DETECTED">OBJECT DETECTED</option>
           </select>
         </div>
 
         <div>
-          <label className="block text-xs font-semibold text-slate-500 mb-1">Alert Severity</label>
+          <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">Severity Level</label>
           <select
             value={selectedSeverity}
             onChange={(e) => setSelectedSeverity(e.target.value)}
-            className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs text-slate-900 font-semibold focus:outline-none focus:border-blue-500 cursor-pointer"
+            className="w-full px-3 py-2 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white font-medium"
           >
             <option value="">All Severities</option>
-            <option value="CRITICAL">Critical</option>
-            <option value="HIGH">High</option>
-            <option value="MEDIUM">Medium</option>
-            <option value="LOW">Low</option>
+            <option value="CRITICAL">CRITICAL</option>
+            <option value="HIGH">HIGH</option>
+            <option value="MEDIUM">MEDIUM</option>
+            <option value="LOW">LOW</option>
           </select>
         </div>
 
         <div>
-          <label className="block text-xs font-semibold text-slate-500 mb-1">ANPR Plate Search</label>
+          <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">Filter License Plate</label>
           <div className="relative">
-            <Search className="w-4 h-4 text-slate-400 absolute left-3 top-2.5" />
+            <Search className="absolute left-3 top-2.5 w-4 h-4 text-slate-400" />
             <input
               type="text"
-              placeholder="Search plate..."
               value={searchPlate}
               onChange={(e) => setSearchPlate(e.target.value)}
-              className="w-full bg-slate-50 border border-slate-200 rounded-xl pl-9 pr-3 py-2 text-xs text-slate-900 font-semibold focus:outline-none focus:border-blue-500"
+              placeholder="e.g. JK-02"
+              className="w-full pl-9 pr-3 py-2 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white font-mono"
             />
           </div>
         </div>
       </div>
 
-      {/* Events Table */}
+      {/* Events Table / Card List */}
       <div className="light-card overflow-hidden">
+        <div className="p-4 px-5 border-b border-slate-100 dark:border-slate-800 flex items-center justify-between">
+          <h3 className="font-bold text-xs uppercase tracking-wider text-slate-700 dark:text-slate-300">
+            Recorded Surveillance Events ({filteredEvents.length})
+          </h3>
+        </div>
+
         <div className="overflow-x-auto">
-          <table className="w-full text-left text-xs font-sans">
-            <thead className="bg-slate-50 text-slate-600 font-bold uppercase tracking-wider text-[11px] border-b border-slate-200">
+          <table className="w-full text-left text-xs">
+            <thead className="bg-slate-50 dark:bg-slate-950/60 text-slate-500 dark:text-slate-400 uppercase font-mono text-[10px] border-b border-slate-200 dark:border-slate-800">
               <tr>
-                <th className="py-3 px-4">Timestamp</th>
-                <th className="py-3 px-4">Camera Node</th>
-                <th className="py-3 px-4">Event Type</th>
-                <th className="py-3 px-4">Severity</th>
-                <th className="py-3 px-4">Details</th>
-                <th className="py-3 px-4">Confidence</th>
-                <th className="py-3 px-4 text-right">Action</th>
+                <th className="px-5 py-3">Timestamp</th>
+                <th className="px-5 py-3">Camera Node</th>
+                <th className="px-5 py-3">Event Classification</th>
+                <th className="px-5 py-3">Severity</th>
+                <th className="px-5 py-3">Confidence</th>
+                <th className="px-5 py-3">Details / Plate</th>
+                <th className="px-5 py-3 text-right">Evidence</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-slate-100 text-slate-800 font-medium">
+            <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
               {filteredEvents.length === 0 ? (
                 <tr>
-                  <td colSpan={7} className="py-8 text-center text-slate-400 text-xs font-medium">
-                    No surveillance events match the filter criteria.
+                  <td colSpan={7} className="text-center py-10 text-slate-400 text-xs font-medium">
+                    No surveillance events matching the selected filters.
                   </td>
                 </tr>
               ) : (
                 filteredEvents.map((evt) => (
-                  <tr key={evt.id} className="hover:bg-slate-50/80 transition-colors">
-                    <td className="py-3 px-4 whitespace-nowrap text-slate-500 text-xs font-mono">
-                      {new Date(evt.timestamp).toLocaleString()}
+                  <tr key={evt.id} className="hover:bg-slate-50/70 dark:hover:bg-slate-800/40 transition-colors">
+                    <td className="px-5 py-3.5 font-mono text-slate-600 dark:text-slate-400 font-medium">
+                      {new Date(evt.timestamp || Date.now()).toLocaleString()}
                     </td>
-                    <td className="py-3 px-4 font-semibold text-slate-900">
+                    <td className="px-5 py-3.5 font-bold text-slate-900 dark:text-white">
                       {getCameraName(evt.camera_id)}
                     </td>
-                    <td className="py-3 px-4">
-                      <span className="px-2.5 py-1 rounded-lg bg-slate-100 text-slate-800 font-semibold text-xs">
+                    <td className="px-5 py-3.5">
+                      <span className="font-bold text-slate-900 dark:text-slate-200">
                         {evt.event_type}
                       </span>
                     </td>
-                    <td className="py-3 px-4">
-                      <span className={`px-2.5 py-1 rounded-full text-[10px] font-bold text-white ${
-                        evt.severity === 'CRITICAL' ? 'bg-rose-600' :
-                        evt.severity === 'HIGH' ? 'bg-amber-500' :
-                        'bg-slate-600'
+                    <td className="px-5 py-3.5">
+                      <span className={`px-2.5 py-0.5 rounded-full text-[10px] font-bold ${
+                        evt.severity === 'CRITICAL' ? 'bg-rose-100 text-rose-700 dark:bg-rose-950/80 dark:text-rose-300 border border-rose-300 dark:border-rose-800' :
+                        evt.severity === 'HIGH' ? 'bg-amber-100 text-amber-700 dark:bg-amber-950/80 dark:text-amber-300 border border-amber-300 dark:border-amber-800' :
+                        'bg-blue-100 text-blue-700 dark:bg-blue-950/80 dark:text-blue-300 border border-blue-300 dark:border-blue-800'
                       }`}>
-                        {evt.severity || 'MEDIUM'}
+                        {evt.severity}
                       </span>
                     </td>
-                    <td className="py-3 px-4">
+                    <td className="px-5 py-3.5 font-mono text-slate-700 dark:text-slate-300 font-bold">
+                      {evt.confidence ? `${Math.round(evt.confidence * 100)}%` : '—'}
+                    </td>
+                    <td className="px-5 py-3.5 font-mono">
                       {evt.plate_number ? (
-                        <span className="text-blue-600 font-bold font-mono">
-                          Plate: {evt.plate_number}
-                        </span>
-                      ) : evt.person_name ? (
-                        <span className="text-rose-600 font-bold">
-                          Face: {evt.person_name}
+                        <span className="bg-slate-900 text-amber-400 px-2 py-0.5 rounded text-[11px] font-bold border border-slate-800">
+                          {evt.plate_number}
                         </span>
                       ) : (
-                        <span className="text-slate-500">Target Detected</span>
+                        <span className="text-slate-500 dark:text-slate-400 text-xs">Tripwire Perimeter</span>
                       )}
                     </td>
-                    <td className="py-3 px-4 text-emerald-600 font-bold font-mono">
-                      {((evt.confidence || 0.94) * 100).toFixed(0)}%
-                    </td>
-                    <td className="py-3 px-4 text-right">
-                      <button
-                        onClick={() => setSelectedEventModal(evt)}
-                        className="px-3 py-1.5 bg-blue-50 text-blue-600 hover:bg-blue-100 rounded-lg font-bold text-xs cursor-pointer transition-colors"
-                      >
-                        View Photo
-                      </button>
+                    <td className="px-5 py-3.5 text-right">
+                      {evt.snapshot_path ? (
+                        <button
+                          onClick={() => setSelectedEventModal(evt)}
+                          className="px-2.5 py-1 bg-blue-50 dark:bg-blue-950/60 text-blue-600 dark:text-blue-300 hover:bg-blue-100 rounded-lg text-xs font-bold inline-flex items-center gap-1 cursor-pointer transition-colors border border-blue-200 dark:border-blue-800"
+                        >
+                          <Eye className="w-3.5 h-3.5" />
+                          View
+                        </button>
+                      ) : (
+                        <span className="text-slate-400 text-[11px] font-mono">N/A</span>
+                      )}
                     </td>
                   </tr>
                 ))
@@ -181,27 +191,51 @@ export default function EventsHistory({ events, cameras, onRefreshEvents }) {
         </div>
       </div>
 
-      {/* Snapshot Modal */}
+      {/* Evidence Snapshot Modal */}
       {selectedEventModal && (
-        <div className="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-4 font-sans">
-          <div className="bg-white max-w-xl w-full rounded-2xl p-6 space-y-4 border border-slate-200 shadow-2xl">
-            <div className="flex items-center justify-between pb-2 border-b border-slate-100">
-              <h3 className="text-sm font-bold text-slate-900">
-                Event #{selectedEventModal.id} Snapshot Record
+        <div className="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm flex items-center justify-center p-4">
+          <div className="bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-800 max-w-lg w-full p-6 space-y-4 shadow-2xl">
+            <div className="flex items-center justify-between pb-3 border-b border-slate-100 dark:border-slate-800">
+              <h3 className="font-bold text-sm text-slate-900 dark:text-white flex items-center gap-2">
+                <ShieldAlert className="w-4 h-4 text-blue-600" />
+                Snapshot Evidence Frame #{selectedEventModal.id}
               </h3>
-              <button onClick={() => setSelectedEventModal(null)} className="text-slate-400 hover:text-slate-900 font-bold cursor-pointer">✕</button>
+              <button 
+                onClick={() => setSelectedEventModal(null)}
+                className="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 cursor-pointer"
+              >
+                <X className="w-5 h-5" />
+              </button>
             </div>
 
-            <div className="relative rounded-xl overflow-hidden bg-slate-900 h-64 flex items-center justify-center border border-slate-200">
+            <div className="rounded-2xl overflow-hidden border border-slate-200 dark:border-slate-700 bg-slate-950 aspect-video flex items-center justify-center">
               <img
-                src={selectedEventModal.snapshot_path || 'https://images.unsplash.com/photo-1579783902614-a3fb3927b675?w=600&auto=format&fit=crop&q=80'}
-                alt="Snapshot"
+                src={selectedEventModal.snapshot_path}
+                alt="Event Evidence Frame"
                 className="w-full h-full object-cover"
               />
+            </div>
+
+            <div className="p-3.5 rounded-xl bg-slate-50 dark:bg-slate-950/50 border border-slate-200 dark:border-slate-800 text-xs space-y-1.5 font-mono">
+              <p className="text-slate-700 dark:text-slate-300">
+                <strong>Camera:</strong> {getCameraName(selectedEventModal.camera_id)}
+              </p>
+              <p className="text-slate-700 dark:text-slate-300">
+                <strong>Event:</strong> {selectedEventModal.event_type} ({selectedEventModal.severity})
+              </p>
+              <p className="text-slate-700 dark:text-slate-300">
+                <strong>Timestamp:</strong> {new Date(selectedEventModal.timestamp || Date.now()).toLocaleString()}
+              </p>
+              {selectedEventModal.plate_number && (
+                <p className="text-amber-600 dark:text-amber-400">
+                  <strong>Recognized Plate:</strong> {selectedEventModal.plate_number}
+                </p>
+              )}
             </div>
           </div>
         </div>
       )}
+
     </div>
   );
 }
